@@ -26,24 +26,34 @@ declare(strict_types=1);
 
 namespace froq\Date;
 
-use froq\date\Date;
+use froq\date\{Date, DateException};
 
 /**
- * UTC Date.
+ * Timestamp.
  * @package froq\date
- * @object  froq\date\UtcDate
+ * @object  froq\date\Timestamp
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   4.0
+ * @static
  */
-class UtcDate extends Date
+final class Timestamp
 {
     /**
-     * Constructor.
-     * @param string|int $when
+     * Now.
+     * @return int
      */
-    public function __construct($when = null)
+    public static function now(): int
     {
-        parent::__construct($when, 'UTC');
+        return time();
+    }
+
+    /**
+     * Now utc.
+     * @return int
+     */
+    public static function nowUtc(): int
+    {
+        return time() - date('Z');
     }
 }
 

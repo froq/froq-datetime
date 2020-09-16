@@ -81,25 +81,25 @@ class Date
 
     /**
      * Constructor.
-     * @param  string|int|null $dateTime
-     * @param  string|null     $dateTimeZone
+     * @param  string|int|null $when
+     * @param  string|null     $where
      * @throws froq\date\DateException
      */
-    public function __construct($dateTime = null, string $dateTimeZone = null)
+    public function __construct($when = null, string $where = null)
     {
-        $dateTime = $dateTime ?? '';
-        $dateTimeZone = $dateTimeZone ?? date_default_timezone_get();
+        $when = $when ?? '';
+        $where = $where ?? date_default_timezone_get();
 
         try {
-            $dateTimeZone = new DateTimeZone($dateTimeZone);
+            $dateTimeZone = new DateTimeZone($where);
 
-            if (is_string($dateTime)) {
-                $dateTime = new DateTime($dateTime, $dateTimeZone);
-            } elseif (is_int($dateTime)) {
-                $dateTime = (new DateTime('', $dateTimeZone))->setTimestamp($dateTime);
+            if (is_string($when)) {
+                $dateTime = new DateTime($when, $dateTimeZone);
+            } elseif (is_int($when)) {
+                $dateTime = (new DateTime('', $dateTimeZone))->setTimestamp($when);
             } else {
                 throw new DateException('Invalid date/time type "%s" given, valids are: int, string, null',
-                    [gettype($dateTime)]);
+                    [gettype($when)]);
             }
         } catch (Throwable $e) {
             throw new DateException($e);
@@ -158,12 +158,12 @@ class Date
 
     /**
      * Set timezone.
-     * @param  string $timezone
+     * @param  string $where
      * @return self (static)
      */
-    public final function setTimezone(string $timezone): self
+    public final function setTimezone(string $where): self
     {
-        $this->dateTimeZone = new DateTimeZone($timezone);
+        $this->dateTimeZone = new DateTimeZone($where);
         $this->dateTime->setTimezone($this->dateTimeZone);
 
         return $this;
@@ -380,128 +380,15 @@ class Date
     }
 
     /**
-     * Ago.
-     * @param  int         $timestamp
-     * @param  string|null $format
-     * @param  array|nulll $intl
-     * @param  bool        $showTime
-     * @return string
+     * Interval.
+     * @param  string   $content
+     * @param  int|null $time
+     * @return int
      */
-    public static final function ago(int $timestamp, string $format = null, array $intl = null,
-        bool $showTime = true): string
+    public static function interval(string $content, int $time = null): int
     {
-        // Both static.
-        static $date, $dateNow; if (!$date || !$dateNow) {
-            $date = new DateTime();
-            $dateNow = new DateTime();
-        }
+        $time = $time ?? static::now();
 
-        // Just update/modify timestamp.
-        $date->setTimestamp($timestamp);
-
-        switch ($diff = $dateNow->diff($date)) {
-            // Yesterday.
-            case ($diff->days == 1):
-                $yesterday = $intl['yesterday'] ?? 'Yesterday';
-                return $showTime ? $yesterday .', '. strftime('%H:%M', $date->getTimestamp())
-                                 : $yesterday;
-
-            // 2-7 days.
-            case ($diff->days >= 2 && $diff->days <= 7):
-                return $showTime ? strftime('%A, %H:%M', $date->getTimestamp())
-                                 : strftime('%A', $date->getTimestamp());
-
-            // Week & more.
-            case ($diff->days > 7):
-                $format = $format ?? ($showTime ? self::FORMAT_AGO : self::FORMAT_AGO_SHORT);
-                return strftime($format, $date->getTimestamp());
-
-            // Hours, minutes, now.
-            default:
-                if ($diff->h >= 1) {
-                    return $diff->h .' '. (
-                        ($diff->h == 1) ? $intl['hour'] ?? 'hour'
-                                        : $intl['hours'] ?? 'hours'
-                    );
-                }
-
-                if ($diff->i >= 1) {
-                    return $diff->i .' '. (
-                        ($diff->i == 1) ? $intl['minute'] ?? 'minute'
-                                        : $intl['minutes'] ?? 'minutes'
-                    );
-                }
-
-                return $intl['now'] ?? 'Just now'; // A few seconds ago.
-        }
-    }
-
-    /**
-     * Diff.
-     * @param  string|int $dateTime
-     * @return array
-     */
-    public static final function diff($dateTime): array
-    {
-        $date = new DateTime($dateTime = self::init($dateTime)->format('c'));
-        $dateNow = new DateTime();
-
-        $diff = $dateNow->diff($date);
-
-        return ['datetime' => $dateTime, 'year' => $diff->y, 'month' => $diff->m, 'day' => $diff->d,
-                'days' => $diff->days, 'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
-                'millisecond' => $diff->f];
-    }
-
-    /**
-     * List timezones.
-     * @param  string|int  $group
-     * @param  string|null $groupCountry
-     * @return array
-     * @throws froq\date\DateException
-     */
-    public static final function listTimezones($group = null, string $groupCountry = null): array
-    {
-        $ret = [];
-        if ($group == null) {
-            $ret[] = ['id' => 'UTC', 'name' => 'UTC', 'offset' => 0]; // Always first..
-        }
-
-        $date = new DateTime();
-
-        if ($group != null) {
-            if ($groupCountry != null) { // Eg: tr => TR (for typos).
-                $groupCountry = strtoupper($groupCountry);
-            }
-
-            if (is_int($group)) {
-                $ids = DateTimeZone::listIdentifiers($group, $groupCountry);
-            } elseif (is_string($group)) {
-                $ids = DateTimeZone::listIdentifiers(constant('DateTimeZone::'. strtoupper($group)), $groupCountry);
-            } else {
-                throw new DateException('Invalid group type "%s" given, valids are: int, string, null',
-                    [gettype($group)]);
-            }
-        } else {
-            $ids = DateTimeZone::listIdentifiers();
-        }
-
-        foreach ($ids as $id) {
-            if ($group == null && $id == 'UTC') { // Already set first.
-                continue;
-            }
-
-            $offset = $date->setTimezone(new DateTimeZone($id))->getOffset();
-            $offsetString = $date->format('P'); // Eg: +03:00 (for Europe/Istanbul).
-
-            $ret[] = [
-                'id' => $id,
-                'name' => str_replace(['/', '_'], [' / ', ' '], $id),
-                'offset' => $offset,
-                'offsetString' => $offsetString
-            ];
-        }
-
-        return $ret;
+        return strtotime($content, $time) - $time;
     }
 }
