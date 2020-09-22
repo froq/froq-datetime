@@ -39,6 +39,14 @@ use DateTime, DateTimeZone, Throwable;
 class Date
 {
     /**
+     * Intervals.
+     * @const int
+     */
+    public const ONE_MINUTE = 60,
+                 ONE_HOUR   = 3600,
+                 ONE_DAY    = 86400;
+
+    /**
      * Formats.
      * @const string
      */
@@ -53,7 +61,6 @@ class Date
                  FORMAT_AGO_SHORT    = '%d %B %Y',
                  FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
                  FORMAT_HTTP_COOKIE  = 'D, d M Y H:i:s \G\M\T'; // @rfc6265
-
 
     /**
      * Date time.
