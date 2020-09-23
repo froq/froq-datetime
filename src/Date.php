@@ -44,7 +44,9 @@ class Date
      */
     public const ONE_MINUTE = 60,
                  ONE_HOUR   = 3600,
-                 ONE_DAY    = 86400;
+                 ONE_DAY    = 86400,
+                 ONE_MONTH  = 2592000, // 86400 * 30
+                 ONE_YEAR   = 31536000; // 86400 * 365
 
     /**
      * Formats.
