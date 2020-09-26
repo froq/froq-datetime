@@ -45,6 +45,7 @@ class Date
     public const ONE_MINUTE = 60,
                  ONE_HOUR   = 3600,
                  ONE_DAY    = 86400,
+                 ONE_WEEK   = 604800, // 86400 * 7
                  ONE_MONTH  = 2592000, // 86400 * 30
                  ONE_YEAR   = 31536000; // 86400 * 365
 
@@ -56,13 +57,14 @@ class Date
                  FORMAT_UTC          = 'Y-m-d\TH:i:s\Z',
                  FORMAT_MS           = 'Y-m-d\TH:i:s.u',
                  FORMAT_UTC_MS       = 'Y-m-d\TH:i:s.u\Z',
+                 FORMAT_ISO          = self::FORMAT_UTC_MS, // @alias
                  FORMAT_SQL          = 'Y-m-d H:i:s',
                  FORMAT_LOCALE       = '%d %B %Y, %H:%M',
                  FORMAT_LOCALE_SHORT = '%d %B %Y',
                  FORMAT_AGO          = '%d %B %Y, %H:%M',
                  FORMAT_AGO_SHORT    = '%d %B %Y',
                  FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
-                 FORMAT_HTTP_COOKIE  = 'D, d M Y H:i:s \G\M\T'; // @rfc6265
+                 FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP;       // @rfc6265
 
     /**
      * Date time.
@@ -290,7 +292,7 @@ class Date
     }
 
     /**
-     * To utc string.
+     * To UTC string.
      * @param  string|null $format
      * @return string
      */
@@ -328,6 +330,20 @@ class Date
     public final function toHttpCookieString(): string
     {
         return $this->format(self::FORMAT_HTTP_COOKIE);
+    }
+
+    /**
+     * To ISO string.
+     * @return string
+     * @since  4.3
+     */
+    public final function toIsoString(): string
+    {
+        return preg_replace(
+            // Get only 3-usec.
+            '~(.+)\.(\d{3})(\d+)Z$~', '\1.\2Z',
+            $this->toUtcString(self::FORMAT_ISO)
+        );
     }
 
     /**
