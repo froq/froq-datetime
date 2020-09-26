@@ -54,11 +54,12 @@ class Date
      * @const string
      */
     public const FORMAT              = 'Y-m-d\TH:i:s', // @default
-                 FORMAT_UTC          = 'Y-m-d\TH:i:s\Z',
                  FORMAT_MS           = 'Y-m-d\TH:i:s.u',
+                 FORMAT_UTC          = 'Y-m-d\TH:i:s\Z',
                  FORMAT_UTC_MS       = 'Y-m-d\TH:i:s.u\Z',
-                 FORMAT_ISO          = self::FORMAT_UTC_MS, // @alias
                  FORMAT_SQL          = 'Y-m-d H:i:s',
+                 FORMAT_SQL_MS       = 'Y-m-d H:i:s.u',
+                 FORMAT_ISO          = self::FORMAT_UTC_MS, // @alias
                  FORMAT_LOCALE       = '%d %B %Y, %H:%M',
                  FORMAT_LOCALE_SHORT = '%d %B %Y',
                  FORMAT_AGO          = '%d %B %Y, %H:%M',
