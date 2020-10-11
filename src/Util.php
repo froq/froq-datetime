@@ -74,7 +74,7 @@ final class Util extends StaticClass
 
             // Week & more.
             case ($diff->days > 7):
-                $format = $format ?? ($showTime ? Date::FORMAT_AGO : Date::FORMAT_AGO_SHORT);
+                $format ??= ($showTime ? Date::FORMAT_AGO : Date::FORMAT_AGO_SHORT);
                 return strftime($format, $date->getTimestamp());
 
             // Hours, minutes, now.
