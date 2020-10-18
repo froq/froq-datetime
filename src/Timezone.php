@@ -94,8 +94,8 @@ final class Timezone
         }
 
         $ret = [];
-        if ($group == null) {
-            $ret[] = ['id' => 'UTC', 'name' => 'UTC', 'offset' => 0]; // Always first..
+        if ($group == null) { // Always first..
+            $ret[] = ['id' => 'UTC', 'name' => 'UTC', 'offset' => 0, 'offsetString' => '+00:00'];
         }
 
         $date = new DateTime();
