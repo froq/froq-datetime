@@ -26,8 +26,6 @@ declare(strict_types=1);
 
 namespace froq\Date;
 
-use froq\date\{Date, DateException};
-
 /**
  * Timestamp.
  * @package froq\date
