@@ -39,7 +39,7 @@ class UtcDate extends Date
 {
     /**
      * Constructor.
-     * @param string|int $when
+     * @param string|int|float|null $when
      */
     public function __construct($when = null)
     {
