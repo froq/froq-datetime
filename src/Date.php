@@ -67,7 +67,7 @@ class Date
                  FORMAT_TIME_MS      = 'Y-m-d\TH:i:s.u',
                  FORMAT_TIME_ZERO    = 'Y-m-d\TH:i:s\Z',
                  FORMAT_TIME_ZERO_MS = 'Y-m-d\TH:i:s.u\Z',
-                 FORMAT_ISO          = self::FORMAT_UTC_MS,     // @alias
+                 FORMAT_ISO          = 'Y-m-d\TH:i:s.v\Z',
                  FORMAT_SQL          = self::FORMAT,            // @alias
                  FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
 
@@ -117,8 +117,8 @@ class Date
                     $dateTime->setTimestamp($when);
                     break;
                 case 'float':  // Eg: 1603339284.221243
-                    $dateTime = DateTime::createFromFormat(
-                        'U.u', sprintf('%.6f', $when), $dateTimeZone);
+                    $dateTime = DateTime::createFromFormat('U.u', sprintf('%.6f', $when));
+                    $dateTime->setTimezone($dateTimeZone);
                     break;
                 default:
                     throw new DateException('Invalid date/time type "%s" given, valids are: '.
@@ -343,11 +343,7 @@ class Date
      */
     public final function toIsoString(): string
     {
-        return preg_replace(
-            // Get only 3-usec.
-            '~(.+)\.(\d{3})(\d+)Z$~', '\1.\2Z',
-            $this->toUtcString(self::FORMAT_ISO)
-        );
+        return $this->toUtcString(self::FORMAT_ISO);
     }
 
     /**
