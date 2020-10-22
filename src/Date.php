@@ -53,19 +53,23 @@ class Date
      * Formats.
      * @const string
      */
-    public const FORMAT              = 'Y-m-d\TH:i:s', // @default
-                 FORMAT_MS           = 'Y-m-d\TH:i:s.u',
-                 FORMAT_UTC          = 'Y-m-d\TH:i:s\Z',
-                 FORMAT_UTC_MS       = 'Y-m-d\TH:i:s.u\Z',
-                 FORMAT_SQL          = 'Y-m-d H:i:s',
-                 FORMAT_SQL_MS       = 'Y-m-d H:i:s.u',
-                 FORMAT_ISO          = self::FORMAT_UTC_MS, // @alias
+    public const FORMAT              = 'Y-m-d H:i:s',           // @default
+                 FORMAT_MS           = 'Y-m-d H:i:s.u',
+                 FORMAT_UTC          = 'Y-m-d H:i:s\Z',
+                 FORMAT_UTC_MS       = 'Y-m-d H:i:s.u\Z',
                  FORMAT_LOCALE       = '%d %B %Y, %H:%M',
                  FORMAT_LOCALE_SHORT = '%d %B %Y',
                  FORMAT_AGO          = '%d %B %Y, %H:%M',
                  FORMAT_AGO_SHORT    = '%d %B %Y',
                  FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
-                 FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP;       // @rfc6265
+                 FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP,       // @rfc6265
+                 FORMAT_TIME         = 'Y-m-d\TH:i:s',
+                 FORMAT_TIME_MS      = 'Y-m-d\TH:i:s.u',
+                 FORMAT_TIME_ZERO    = 'Y-m-d\TH:i:s\Z',
+                 FORMAT_TIME_ZERO_MS = 'Y-m-d\TH:i:s.u\Z',
+                 FORMAT_ISO          = self::FORMAT_UTC_MS,     // @alias
+                 FORMAT_SQL          = self::FORMAT,            // @alias
+                 FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
 
     /**
      * Date time.
@@ -83,7 +87,7 @@ class Date
      * Format.
      * @var string
      */
-    protected string $format = self::FORMAT;
+    protected string $format = self::FORMAT_MS;
 
     /**
      * Format locale.
@@ -93,8 +97,8 @@ class Date
 
     /**
      * Constructor.
-     * @param  string|int|null $when
-     * @param  string|null     $where
+     * @param  string|int|float|null $when
+     * @param  string|null           $where
      * @throws froq\date\DateException
      */
     public function __construct($when = null, string $where = null)
@@ -104,14 +108,21 @@ class Date
 
         try {
             $dateTimeZone = new DateTimeZone($where);
-
-            if (is_string($when)) {
-                $dateTime = new DateTime($when, $dateTimeZone);
-            } elseif (is_int($when)) {
-                $dateTime = (new DateTime('', $dateTimeZone))->setTimestamp($when);
-            } else {
-                throw new DateException('Invalid date/time type "%s" given, valids are: int, string, null',
-                    [gettype($when)]);
+            switch (get_type($when)) {
+                case 'string': // Eg: 2012-09-12 23:42:53
+                    $dateTime = new DateTime($when, $dateTimeZone);
+                    break;
+                case 'int':    // Eg: 1603339284
+                    $dateTime = new DateTime('', $dateTimeZone);
+                    $dateTime->setTimestamp($when);
+                    break;
+                case 'float':  // Eg: 1603339284.221243
+                    $dateTime = DateTime::createFromFormat(
+                        'U.u', sprintf('%.6f', $when), $dateTimeZone);
+                    break;
+                default:
+                    throw new DateException('Invalid date/time type "%s" given, valids are: '.
+                        'string, int, float, null', [get_type($when)]);
             }
         } catch (Throwable $e) {
             throw new DateException($e);
@@ -225,7 +236,6 @@ class Date
 
     /**
      * Get format locale.
-     * @param  bool $short
      * @return string
      */
     public final function getFormatLocale(): string
@@ -235,20 +245,13 @@ class Date
 
     /**
      * Get offset.
-     * @return int
+     * @param  bool $int
+     * @return int|string
      */
-    public final function getOffset(): int
+    public final function getOffset(bool $int = true)
     {
-        return $this->dateTime->getOffset();
-    }
-
-    /**
-     * Get offset string.
-     * @return string
-     */
-    public final function getOffsetString(): string
-    {
-        return $this->dateTime->format('P');
+        return $int ? $this->dateTime->getOffset()
+                    : $this->dateTime->format('P');
     }
 
     /**
