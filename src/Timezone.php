@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace froq\Date;
 
-use froq\date\DateException;
+use froq\date\TimezoneException;
 use DateTime, DateTimeZone, Throwable;
 
 /**
@@ -37,21 +37,122 @@ use DateTime, DateTimeZone, Throwable;
  * @since   4.0
  * @static
  */
-final class Timezone
+class Timezone
 {
     /**
-     * Init.
-     * @param  string $where
-     * @return DateTimeZone
-     * @throws froq\date\DateException
+     * Instance.
+     * @var self (static)
+     * @since 4.5
      */
-    public static function init(string $where): DateTimeZone
+    private static self $instance;
+
+    /**
+     * Info.
+     * @var array
+     * @since 4.5
+     */
+    protected array $info;
+
+    /**
+     * Constructor.
+     * @param string $id
+     * @since 4.5
+     */
+    public function __construct(string $id)
     {
-        try {
-            return new DateTimeZone($where);
-        } catch (Throwable $e) {
-            throw new DateException($e);
+        $this->info = self::makeInfo($id);
+    }
+
+    /**
+     * String magic.
+     * @return string
+     * @since  4.5
+     */
+    public function __toString()
+    {
+        return $this->info['id'];
+    }
+
+    /**
+     * Init.
+     * @param  ... $arguments
+     * @return self (static)
+     * @since  4.0, 4.5 Replaced with make().
+     */
+    public static final function init(...$arguments): self
+    {
+        return new static(...$arguments);
+    }
+
+    /**
+     * Init single.
+     * @param  ... $arguments
+     * @return self (static)
+     * @since  4.5
+     */
+    public static final function initSingle(...$arguments): self
+    {
+        return self::$instance ??= new static(...$arguments);
+    }
+
+    /**
+     * Info.
+     * @param  string|null $key
+     * @return any
+     * @since  4.5
+     */
+    public final function info(string $key = null)
+    {
+        return !$key ? $this->info : $this->info[$key] ?? null;
+    }
+
+    /**
+     * Make.
+     * @param  string $id
+     * @return DateTimeZone
+     * @throws froq\date\TimezoneException
+     * @since  4.5 Taken from init().
+     */
+    public static final function make(string $id): DateTimeZone
+    {
+        // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
+        if (!self::isValidId($id)) {
+            throw new TimezoneException('Invalid timezone id "%s", use UTC, XXX/XXX, ±XX or '.
+                '±XX:XX conventions', [$id]);
         }
+
+        try {
+            return new DateTimeZone($id);
+        } catch (Throwable $e) {
+            throw new TimezoneException($e);
+        }
+    }
+
+    /**
+     * Make info.
+     * @param  string $id
+     * @return array
+     * @since  4.5
+     */
+    public static final function makeInfo(string $id): array
+    {
+        $zone = self::make($id);
+        $date = new DateTime('', $zone);
+
+        $id = $zone->getName();
+        $name = str_replace(['/', '_'], [' / ', ' '], $id);
+        $transitions = $zone->getTransitions($date->getTimestamp(), $date->getTimestamp());
+
+        return [
+            'id' => $id, 'name' => $name,
+            'offset' => ['id' => $date->format('P'), 'diff' => $date->getOffset()],
+            'transition' => [
+                'date' => ['utc' => $transitions[0]['time'], 'local' => $date->format('c')],
+                'time' => ['sec' => $transitions[0]['ts'], 'usec' => (float) $date->format('U.u')],
+                'abbr' => $transitions[0]['abbr'],
+                'dst'  => $transitions[0]['isdst']
+            ]
+        ];
     }
 
     /**
@@ -59,9 +160,9 @@ final class Timezone
      * @param  string|int|null $group
      * @param  string|null     $country
      * @return array
-     * @throws froq\date\DateException
+     * @throws froq\date\TimezoneException
      */
-    public static function list($group = null, string $country = null): array
+    public static final function list($group = null, string $country = null): array
     {
         if ($group == null && $country != null) {
             $group = DateTimeZone::PER_COUNTRY;
@@ -78,42 +179,32 @@ final class Timezone
                 } elseif (is_string($group)) {
                     $group = constant('DateTimeZone::'. ($groupName = strtoupper($group)));
                     if ($group === null) {
-                        throw new DateException('Invalid group name "%s" given', [$groupName]);
+                        throw new TimezoneException('Invalid group name "%s" given', [$groupName]);
                     }
 
                     $ids = DateTimeZone::listIdentifiers($group, $country);
                 } else {
-                    throw new DateException('Invalid group type "%s" given, valids are: int, string, null',
+                    throw new TimezoneException('Invalid group type "%s" given, valids are: int, string, null',
                         [gettype($group)]);
                 }
             } else {
                 $ids = DateTimeZone::listIdentifiers();
             }
         } catch (Throwable $e) {
-            throw new DateException($e);
+            throw new TimezoneException($e);
         }
 
         $ret = [];
         if ($group == null) { // Always first..
-            $ret[] = ['id' => 'UTC', 'name' => 'UTC', 'offset' => 0, 'offsetString' => '+00:00'];
+            $ret[] = self::makeInfo('UTC');
         }
-
-        $date = new DateTime();
 
         foreach ($ids as $id) {
             if ($group == null && $id == 'UTC') { // Already set first.
                 continue;
             }
 
-            $offset = $date->setTimezone(new DateTimeZone($id))->getOffset();
-            $offsetString = $date->format('P'); // Eg: +03:00 (for Europe/Istanbul).
-
-            $ret[] = [
-                'id' => $id,
-                'name' => str_replace(['/', '_'], [' / ', ' '], $id),
-                'offset' => $offset,
-                'offsetString' => $offsetString
-            ];
+            $ret[] = self::makeInfo($id);
         }
 
         return $ret;
@@ -125,7 +216,7 @@ final class Timezone
      * @param  string|null $country
      * @return array
      */
-    public static function listBy($group, string $country = null): array
+    public static final function listBy($group, string $country = null): array
     {
         return self::list($group, $country);
     }
@@ -135,24 +226,29 @@ final class Timezone
      * @param  string|null $country
      * @return array
      */
-    public static function listByCountry($country): array
+    public static final function listByCountry($country): array
     {
         return self::list(null, $country);
     }
 
     /**
-     * Is valid.
-     * @param  string $where
+     * Is valid id.
+     * @param  string $id
      * @return bool
      */
-    public static function isValid(string $where): bool
+    public static final function isValidId(string $id): bool
     {
-        try {
-            self::init($where);
-            return true;
-        } catch (DateException $e) {
+        // Eg: "Z" is not valid.
+        if (!$id || strlen($id) < 3) {
             return false;
         }
+
+        // Eg: "UTC", "+03", "+03:00" or "Europe/Istanbul".
+        if ($id != 'UTC' && !preg_match('~^\w+/\w+|[+-]\d{2}(?:[:]\d{2})?$~', $id)) {
+            return false;
+        }
+
+        return true;
     }
 }
 

@@ -26,8 +26,9 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\date\{Date, UtcDate, DateException};
-use DateTime, DateTimeZone, Throwable;
+use froq\common\interfaces\Arrayable;
+use froq\date\{Date, UtcDate, DateException, Timezone, TimezoneException};
+use DateTime, DateTimeZone, Throwable, JsonSerializable;
 
 /**
  * Date.
@@ -36,7 +37,7 @@ use DateTime, DateTimeZone, Throwable;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   4.0
  */
-class Date
+class Date implements Arrayable, JsonSerializable
 {
     /**
      * Intervals.
@@ -54,22 +55,28 @@ class Date
      * @const string
      */
     public const FORMAT              = 'Y-m-d H:i:s',           // @default
+                 FORMAT_TZ           = 'Y-m-d H:i:s P',
                  FORMAT_MS           = 'Y-m-d H:i:s.u',
-                 FORMAT_UTC          = 'Y-m-d H:i:s\Z',
-                 FORMAT_UTC_MS       = 'Y-m-d H:i:s.u\Z',
-                 FORMAT_LOCALE       = '%d %B %Y, %H:%M',
+                 FORMAT_TZ_MS        = 'Y-m-d H:i:s.u P',
+                 FORMAT_LOCALE       = '%d %B %Y, %R',
                  FORMAT_LOCALE_SHORT = '%d %B %Y',
-                 FORMAT_AGO          = '%d %B %Y, %H:%M',
+                 FORMAT_AGO          = '%d %B %Y, %R',
                  FORMAT_AGO_SHORT    = '%d %B %Y',
                  FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
                  FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP,       // @rfc6265
-                 FORMAT_TIME         = 'Y-m-d\TH:i:s',
-                 FORMAT_TIME_MS      = 'Y-m-d\TH:i:s.u',
-                 FORMAT_TIME_ZERO    = 'Y-m-d\TH:i:s\Z',
-                 FORMAT_TIME_ZERO_MS = 'Y-m-d\TH:i:s.u\Z',
-                 FORMAT_ISO          = 'Y-m-d\TH:i:s.v\Z',
+                 FORMAT_ISO          = 'Y-m-d\TH:i:sP',
+                 FORMAT_ISO_MS       = 'Y-m-d\TH:i:s.uP',
+                 FORMAT_ISO_UTC      = 'Y-m-d\TH:i:s\Z',
+                 FORMAT_ISO_UTC_MS   = 'Y-m-d\TH:i:s.u\Z',
                  FORMAT_SQL          = self::FORMAT,            // @alias
                  FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
+
+    /**
+     * Instance.
+     * @var self (static)
+     * @since 4.5
+     */
+    private static self $instance;
 
     /**
      * Date time.
@@ -87,27 +94,36 @@ class Date
      * Format.
      * @var string
      */
-    protected string $format = self::FORMAT_MS;
+    protected string $format = self::FORMAT;
 
     /**
-     * Format locale.
+     * Locale.
      * @var string
+     * @since 4.5
      */
-    protected string $formatLocale = self::FORMAT_LOCALE;
+    protected string $locale;
+
+    /**
+     * Locale format.
+     * @var string
+     * @since 4.0, 4.5 Renamed from $formatLocale.
+     */
+    protected string $localeFormat = self::FORMAT_LOCALE;
 
     /**
      * Constructor.
      * @param  string|int|float|null $when
      * @param  string|null           $where
+     * @param  string|null           $locale
      * @throws froq\date\DateException
      */
-    public function __construct($when = null, string $where = null)
+    public function __construct($when = null, string $where = null, string $locale = null)
     {
         $when = $when ?? '';
         $where = $where ?? date_default_timezone_get();
 
         try {
-            $dateTimeZone = new DateTimeZone($where);
+            $dateTimeZone = Timezone::make($where);
             switch (get_type($when)) {
                 case 'string': // Eg: 2012-09-12 23:42:53
                     $dateTime = new DateTime($when, $dateTimeZone);
@@ -117,19 +133,34 @@ class Date
                     $dateTime->setTimestamp($when);
                     break;
                 case 'float':  // Eg: 1603339284.221243
-                    $dateTime = DateTime::createFromFormat('U.u', sprintf('%.6f', $when));
+                    $dateTime = DateTime::createFromFormat('U.u', sprintf('%.6F', $when));
                     $dateTime->setTimezone($dateTimeZone);
                     break;
                 default:
                     throw new DateException('Invalid date/time type "%s" given, valids are: '.
                         'string, int, float, null', [get_type($when)]);
             }
+        } catch (DateException | TimezoneException $e) {
+            throw $e;
         } catch (Throwable $e) {
             throw new DateException($e);
         }
 
-        $this->dateTime = $dateTime;
+        // @cancel: Let user pass proper arguments..
+        // // Note: Since DateTime accepts a timezone as first argument ($when), we should make
+        // // DateTimeZone's same here. Otherwise Date.DateTime & Date.DateTimeZone objects will
+        // // have different timezones.
+        // $zone1 = $dateTime->getTimezone()->getName();
+        // $zone2 = $dateTimeZone->getName();
+        // if ($zone1 != $zone2) {
+        //     $zone = new DateTimeZone($zone1);
+        //     $dateTime->setTimezone($zone);
+        //     $dateTimeZone = $zone;
+        // }
+
+        $this->dateTime     = $dateTime;
         $this->dateTimeZone = $dateTimeZone;
+        $this->locale       = $locale ?? (setlocale(LC_TIME, 0) ?: 'en_US.UTF-8');
     }
 
     /**
@@ -142,18 +173,38 @@ class Date
     }
 
     /**
-     * Get date time.
+     * Init.
+     * @param  ... $arguments
+     * @return self (static)
+     */
+    public static final function init(...$arguments): self
+    {
+        return new static(...$arguments);
+    }
+
+    /**
+     * Init single.
+     * @param  ... $arguments
+     * @return self (static)
+     */
+    public static final function initSingle(...$arguments): self
+    {
+        return self::$instance ??= new static(...$arguments);
+    }
+
+    /**
+     * Date time.
      * @return DateTime
      */
-    public final function getDateTime(): DateTime
+    public final function dateTime(): DateTime
     {
         return $this->dateTime;
     }
     /**
-     * Get date time zone.
+     * Date time zone.
      * @return DateTimeZone
      */
-    public final function getDateTimeZone(): DateTimeZone
+    public final function dateTimeZone(): DateTimeZone
     {
         return $this->dateTimeZone;
     }
@@ -172,11 +223,13 @@ class Date
 
     /**
      * Get timestamp.
-     * @return int
+     * @param  bool $float
+     * @return int|float
      */
-    public final function getTimestamp(): int
+    public final function getTimestamp(bool $float = false)
     {
-        return $this->dateTime->getTimestamp();
+        return !$float ? $this->dateTime->getTimestamp()
+             : (float) $this->dateTime->format('U.u');
     }
 
     /**
@@ -223,35 +276,60 @@ class Date
     }
 
     /**
-     * Set format locale.
-     * @param  string $formatLocale
-     * @return self (static)
+     * Set locale.
+     * @param  string $locale
+     * @return self
+     * @since  4.5
      */
-    public final function setFormatLocale(string $formatLocale): self
+    public final function setLocale(string $locale): self
     {
-        $this->formatLocale = $formatLocale;
+        $this->locale = $locale;
 
         return $this;
     }
 
     /**
-     * Get format locale.
+     * Get locale.
      * @return string
+     * @since  4.5
      */
-    public final function getFormatLocale(): string
+    public final function getLocale(): string
     {
-        return $this->formatLocale;
+        return $this->locale;
     }
 
     /**
-     * Get offset.
-     * @param  bool $int
+     * Set locale format.
+     * @param  string $localeFormat
+     * @return self (static)
+     * @since  4.0, 4.5 Renamed from setFormatLocale().
+     */
+    public final function setLocaleFormat(string $localeFormat): self
+    {
+        $this->localeFormat = $localeFormat;
+
+        return $this;
+    }
+
+    /**
+     * Get locale format.
+     * @return string
+     * @since  4.0, 4.5 Renamed from getFormatLocale().
+     */
+    public final function getLocaleFormat(): string
+    {
+        return $this->localeFormat;
+    }
+
+    /**
+     * Offset.
+     * @param  bool $string
      * @return int|string
      */
-    public final function getOffset(bool $int = true)
+    public final function offset(bool $string = false)
     {
-        return $int ? $this->dateTime->getOffset()
-                    : $this->dateTime->format('P');
+        return !$string ? $this->dateTime->getOffset()
+                        : $this->dateTime->format('P');
     }
 
     /**
@@ -267,13 +345,33 @@ class Date
     /**
      * Format locale.
      * @param  string|null $format
+     * @param  string|null $locale
      * @return string
      */
-    public final function formatLocale(string $format = null): string
+    public final function formatLocale(string $format = null, string $locale = null): string
     {
-        return ($this->getOffset() != 0) // UTC check.
-            ? strftime($format ?: $this->getFormatLocale(), $this->getTimestamp())
-            : gmstrftime($format ?: $this->getFormatLocale(), $this->getTimestamp());
+        // Memoize current stuff.
+        static $currentLocale, $currentTimezone, $timezone;
+        $currentLocale ??= $this->locale;
+        $currentTimezone ??= date_default_timezone_get();
+
+        $locale = $locale ?? $currentLocale;
+        $timezone ??= ($currentTimezone != $this->getTimezone()) // Not needed for same timezones.
+            ? $this->getTimezone() : null;
+
+        // Locale may be null and was set once by another way (for system-wide usages).
+        $locale && setlocale(LC_TIME, $locale);
+        $timezone && date_default_timezone_set($timezone);
+
+        $ret = ($this->offset() != 0) // UTC check.
+             ? strftime($format ?: $this->localeFormat, $this->getTimestamp())
+             : gmstrftime($format ?: $this->localeFormat, $this->getTimestamp());
+
+        // Restore.
+        $locale && setlocale(LC_TIME, $currentLocale);
+        $timezone && date_default_timezone_set($currentTimezone);
+
+        return $ret;
     }
 
     /**
@@ -283,6 +381,16 @@ class Date
     public final function toInt(): int
     {
         return $this->getTimestamp();
+    }
+
+    /**
+     * To float.
+     * @return float
+     * @since  4.5
+     */
+    public final function toFloat(): float
+    {
+        return $this->getTimestamp(true);
     }
 
     /**
@@ -296,16 +404,29 @@ class Date
     }
 
     /**
-     * To UTC string.
+     * To utc string.
      * @param  string|null $format
      * @return string
      */
     public final function toUtcString(string $format = null): string
     {
-        $utc = new Date($this->format(self::FORMAT_MS));
-        $utc->setTimezone('UTC');
+        $date = ($this instanceof UtcDate) ? $this
+              : new UtcDate($this->getTimestamp(true));
 
-        return $utc->format($format ?? self::FORMAT_UTC);
+        return $date->format($format ?? self::FORMAT_ISO_UTC_MS);
+    }
+
+    /**
+     * To iso string.
+     * @param  bool $ms
+     * @return string
+     * @since  4.3
+     */
+    public final function toIsoString(): string
+    {
+        return ($this->offset() != 0) // UTC check.
+             ? $this->format(self::FORMAT_ISO_MS)
+             : $this->format(self::FORMAT_ISO_UTC_MS);
     }
 
     /**
@@ -337,26 +458,6 @@ class Date
     }
 
     /**
-     * To ISO string.
-     * @return string
-     * @since  4.3
-     */
-    public final function toIsoString(): string
-    {
-        return $this->toUtcString(self::FORMAT_ISO);
-    }
-
-    /**
-     * Init.
-     * @param  ... $arguments
-     * @return self (static)
-     */
-    public static final function init(...$arguments): self
-    {
-        return new static(...$arguments);
-    }
-
-    /**
      * Now.
      * @param  string|null $format
      * @return int|string
@@ -379,7 +480,7 @@ class Date
     {
         $now = new static();
 
-        if (!@$now->dateTime->modify('+'. ltrim($content, '+'))) {
+        if (!$now->dateTime->modify($content)) {
             throw new DateException('@error');
         }
 
@@ -397,7 +498,7 @@ class Date
     {
         $now = new static();
 
-        if (!@$now->dateTime->modify('-'. ltrim($content, '-'))) {
+        if (!$now->dateTime->modify($content)) {
             throw new DateException('@error');
         }
 
@@ -410,10 +511,38 @@ class Date
      * @param  int|null $time
      * @return int
      */
-    public static function interval(string $content, int $time = null): int
+    public static final function interval(string $content, int $time = null): int
     {
-        $time = $time ?? static::now();
+        $time = $time ?? self::now();
 
         return strtotime($content, $time) - $time;
+    }
+
+    /**
+     * @inheritDoc froq\common\objects\Arrayable
+     * @since      4.5
+     */
+    public function toArray(): array
+    {
+        return [
+            'date'       => $this->toString(),
+            'dateIso'    => $this->toIsoString(),
+            'dateLocale' => $this->toLocaleString(),
+            'time'       => $this->getTimestamp(),
+            'utime'      => $this->getTimestamp(true),
+            'offset'     => $this->offset(),
+            'offsetId'   => $this->offset(true),
+            'zone'       => $this->getTimezone(),
+            'locale'     => $this->locale,
+        ];
+    }
+
+    /**
+     * @inheritDoc JsonSerializable
+     * @since      4.5
+     */
+    public function jsonSerialize()
+    {
+        return $this->toIsoString();
     }
 }
