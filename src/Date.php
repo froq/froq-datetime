@@ -261,7 +261,7 @@ class Date
      */
     public final function format(string $format = null): string
     {
-        return $this->dateTime->format($format ?: $this->getFormat());
+        return $this->dateTime->format($format ?: $this->format);
     }
 
     /**
