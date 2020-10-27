@@ -525,15 +525,10 @@ class Date implements Arrayable, JsonSerializable
     public function toArray(): array
     {
         return [
-            'date'       => $this->toString(),
-            'dateIso'    => $this->toIsoString(),
-            'dateLocale' => $this->toLocaleString(),
-            'time'       => $this->getTimestamp(),
-            'utime'      => $this->getTimestamp(true),
-            'offset'     => $this->offset(),
-            'offsetId'   => $this->offset(true),
-            'zone'       => $this->getTimezone(),
-            'locale'     => $this->locale,
+            'date'   => $this->toIsoString(),  'dateLocale' => $this->toLocaleString(),
+            'time'   => $this->getTimestamp(),      'utime' => $this->getTimestamp(true),
+            'offset' => $this->offset(),       'offsetCode' => $this->offset(true),
+            'zone'   => $this->getTimezone(),      'locale' => $this->locale,
         ];
     }
 

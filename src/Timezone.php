@@ -145,12 +145,11 @@ class Timezone
 
         return [
             'id' => $id, 'name' => $name,
-            'offset' => ['id' => $date->format('P'), 'diff' => $date->getOffset()],
+            'offset' => $date->getOffset(), 'offsetCode' => $date->format('P'),
             'transition' => [
-                'date' => ['utc' => $transitions[0]['time'], 'local' => $date->format('c')],
-                'time' => ['sec' => $transitions[0]['ts'], 'usec' => (float) $date->format('U.u')],
-                'abbr' => $transitions[0]['abbr'],
-                'dst'  => $transitions[0]['isdst']
+                'date' => $date->format('c'), 'dateUtc' => $transitions[0]['time'],
+                'time' => $transitions[0]['ts'], 'utime' => (float) $date->format('U.u'),
+                'abbr' => $transitions[0]['abbr'], 'dst' => $transitions[0]['isdst']
             ]
         ];
     }
