@@ -147,7 +147,7 @@ class Timezone
             'id' => $id, 'name' => $name,
             'offset' => $date->getOffset(), 'offsetCode' => $date->format('P'),
             'transition' => [
-                'date' => $date->format('c'), 'dateUtc' => $transitions[0]['time'],
+                'date' => $date->format('c'),
                 'time' => $transitions[0]['ts'], 'utime' => (float) $date->format('U.u'),
                 'abbr' => $transitions[0]['abbr'], 'dst' => $transitions[0]['isdst']
             ]
@@ -176,15 +176,16 @@ class Timezone
                 if (is_int($group)) {
                     $ids = DateTimeZone::listIdentifiers($group, $country);
                 } elseif (is_string($group)) {
-                    $group = constant('DateTimeZone::'. ($groupName = strtoupper($group)));
-                    if ($group === null) {
-                        throw new TimezoneException('Invalid group name "%s" given', [$groupName]);
+                    $constant = 'DateTimeZone::'. strtoupper($group);
+                    if (!defined($constant)) {
+                        throw new TimezoneException('Invalid group "%s" given, use valid '.
+                            'DateTimeZone constant', [$group]);
                     }
 
-                    $ids = DateTimeZone::listIdentifiers($group, $country);
+                    $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
                 } else {
-                    throw new TimezoneException('Invalid group type "%s" given, valids are: int, string, null',
-                        [gettype($group)]);
+                    throw new TimezoneException('Invalid group type "%s" given, valids are: '.
+                        'int, string, null', [gettype($group)]);
                 }
             } else {
                 $ids = DateTimeZone::listIdentifiers();
