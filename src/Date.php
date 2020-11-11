@@ -339,7 +339,7 @@ class Date implements Arrayable, JsonSerializable
      */
     public final function format(string $format = null): string
     {
-        return $this->dateTime->format($format ?: $this->format);
+        return $this->dateTime->format($format ?? $this->format);
     }
 
     /**
@@ -364,8 +364,8 @@ class Date implements Arrayable, JsonSerializable
         $timezone && date_default_timezone_set($timezone);
 
         $ret = ($this->offset() != 0) // UTC check.
-             ? strftime($format ?: $this->localeFormat, $this->getTimestamp())
-             : gmstrftime($format ?: $this->localeFormat, $this->getTimestamp());
+             ? strftime($format ?? $this->localeFormat, $this->getTimestamp())
+             : gmstrftime($format ?? $this->localeFormat, $this->getTimestamp());
 
         // Restore.
         $locale && setlocale(LC_TIME, $currentLocale);
