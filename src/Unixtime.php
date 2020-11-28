@@ -27,14 +27,17 @@ declare(strict_types=1);
 namespace froq\Date;
 
 /**
- * Timestamp.
+ * Unixtime.
+ *
+ * Just for only syntactic sugar delight.
+ *
  * @package froq\date
- * @object  froq\date\Timestamp
+ * @object  froq\date\Unixtime
  * @author  Kerem Güneş <k-gun@mail.com>
- * @since   4.0
+ * @since   4.0, 5.0 Renamed from Timestamp.
  * @static
  */
-final class Timestamp
+final class Unixtime
 {
     /**
      * Now.
@@ -43,15 +46,6 @@ final class Timestamp
     public static function now(): int
     {
         return time();
-    }
-
-    /**
-     * Now utc.
-     * @return int
-     */
-    public static function nowUtc(): int
-    {
-        return time() - date('Z');
     }
 }
 
