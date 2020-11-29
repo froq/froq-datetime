@@ -175,18 +175,18 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * Date time.
+     * Get date time.
      * @return DateTime
      */
-    public final function dateTime(): DateTime
+    public final function geDateTime(): DateTime
     {
         return $this->dateTime;
     }
     /**
-     * Date time zone.
+     * Get date time zone.
      * @return DateTimeZone
      */
-    public final function dateTimeZone(): DateTimeZone
+    public final function geDateTimeZone(): DateTimeZone
     {
         return $this->dateTimeZone;
     }
