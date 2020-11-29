@@ -119,8 +119,8 @@ class Date implements Arrayable, JsonSerializable
                     $dateTime->setTimezone($dateTimeZone);
                     break;
                 default:
-                    throw new DateException('Invalid date/time type "%s" given, valids are: '.
-                        'string, int, float, null', [get_type($when)]);
+                    throw new DateException("Invalid date/time type '%s' given, valids are: "
+                        . "string, int, float, null", gettype($when));
             }
         } catch (DateException | TimezoneException $e) {
             throw $e;
@@ -463,7 +463,8 @@ class Date implements Arrayable, JsonSerializable
         $now = new static();
 
         if (!$now->dateTime->modify($content)) {
-            throw new DateException('@error');
+            throw new DateException($now->dateTime->getLastErrors()['errors'][0]
+                ?? 'Failed to modify date');
         }
 
         return !$format ? $now->toInt() : $now->toString($format);
@@ -481,7 +482,8 @@ class Date implements Arrayable, JsonSerializable
         $now = new static();
 
         if (!$now->dateTime->modify($content)) {
-            throw new DateException('@error');
+            throw new DateException($now->dateTime->getLastErrors()['errors'][0]
+                ?? 'Failed to modify date');
         }
 
         return !$format ? $now->toInt() : $now->toString($format);

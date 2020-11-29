@@ -98,8 +98,8 @@ class Timezone
     {
         // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
         if (!self::isValidId($id)) {
-            throw new TimezoneException('Invalid timezone id "%s", use UTC, XXX/XXX, ±XX or '.
-                '±XX:XX conventions', [$id]);
+            throw new TimezoneException("Invalid timezone id '%s', use UTC, Xxx/Xxx, ±NN or "
+                . "±NN:NN convention", $id);
         }
 
         try {
@@ -159,14 +159,14 @@ class Timezone
                 } elseif (is_string($group)) {
                     $constant = 'DateTimeZone::'. strtoupper($group);
                     if (!defined($constant)) {
-                        throw new TimezoneException('Invalid group "%s" given, use valid '.
-                            'DateTimeZone constant', [$group]);
+                        throw new TimezoneException("Invalid group '%s' given, use a valid "
+                            . "DateTimeZone constant name", $group);
                     }
 
                     $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
                 } else {
-                    throw new TimezoneException('Invalid group type "%s" given, valids are: '.
-                        'int, string, null', [gettype($group)]);
+                    throw new TimezoneException("Invalid group type '%s' given, valids are: "
+                        . "int, string, null", gettype($group));
                 }
             } else {
                 $ids = DateTimeZone::listIdentifiers();
