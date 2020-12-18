@@ -97,10 +97,8 @@ class Timezone
     public static final function make(string $id): DateTimeZone
     {
         // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
-        if (!self::isValidId($id)) {
-            throw new TimezoneException("Invalid timezone id '%s', use UTC, Xxx/Xxx, ±NN or "
-                . "±NN:NN convention", $id);
-        }
+        self::isValidId($id) || throw new TimezoneException('Invalid timezone id `%s`, use UTC,'
+            . ' Xxx/Xxx, ±NN or ±NN:NN convention', $id);
 
         try {
             return new DateTimeZone($id);
@@ -142,7 +140,7 @@ class Timezone
      * @return array
      * @throws froq\date\TimezoneException
      */
-    public static final function list($group = null, string $country = null): array
+    public static final function list(string|int $group = null, string $country = null): array
     {
         if ($group == null && $country != null) {
             $group = DateTimeZone::PER_COUNTRY;
@@ -150,23 +148,17 @@ class Timezone
 
         try {
             if ($group != null) {
-                if ($country != null) { // Eg: tr => TR (for typos).
-                    $country = strtoupper($country);
-                }
+                // Eg: tr => TR (for typos).
+                $country && $country = strtoupper($country);
 
                 if (is_int($group)) {
                     $ids = DateTimeZone::listIdentifiers($group, $country);
-                } elseif (is_string($group)) {
+                } else {
                     $constant = 'DateTimeZone::'. strtoupper($group);
-                    if (!defined($constant)) {
-                        throw new TimezoneException("Invalid group '%s' given, use a valid "
-                            . "DateTimeZone constant name", $group);
-                    }
+                    defined($constant) || throw new TimezoneException('Invalid group %s, use a valid'
+                        . ' DateTimeZone constant name', $group);
 
                     $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
-                } else {
-                    throw new TimezoneException("Invalid group type '%s' given, valids are: "
-                        . "int, string, null", gettype($group));
                 }
             } else {
                 $ids = DateTimeZone::listIdentifiers();

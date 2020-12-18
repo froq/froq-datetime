@@ -23,7 +23,7 @@ class UtcDate extends Date
      * Constructor.
      * @param string|int|float|null $when
      */
-    public function __construct($when = null)
+    public function __construct(string|int|float $when = null)
     {
         parent::__construct($when, 'UTC');
     }

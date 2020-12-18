@@ -99,7 +99,7 @@ class Date implements Arrayable, JsonSerializable
      * @param  string|null           $locale
      * @throws froq\date\DateException
      */
-    public function __construct($when = null, string $where = null, string $locale = null)
+    public function __construct(string|int|float $when = null, string $where = null, string $locale = null)
     {
         $when = $when ?? '';
         $where = $where ?? date_default_timezone_get();
@@ -118,11 +118,8 @@ class Date implements Arrayable, JsonSerializable
                     $dateTime = DateTime::createFromFormat('U.u', sprintf('%.6F', $when));
                     $dateTime->setTimezone($dateTimeZone);
                     break;
-                default:
-                    throw new DateException("Invalid date/time type '%s' given, valids are: "
-                        . "string, int, float, null", gettype($when));
             }
-        } catch (DateException | TimezoneException $e) {
+        } catch (TimezoneException $e) {
             throw $e;
         } catch (Throwable $e) {
             throw new DateException($e);
