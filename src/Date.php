@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\common\interfaces\Arrayable;
+use froq\common\interface\Arrayable;
 use froq\date\{Date, UtcDate, DateException, Timezone, TimezoneException};
 use DateTime, DateTimeZone, Throwable, JsonSerializable;
 
@@ -500,7 +500,7 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * @inheritDoc froq\common\objects\Arrayable
+     * @inheritDoc froq\common\interface\Arrayable
      * @since      4.5
      */
     public function toArray(): array
