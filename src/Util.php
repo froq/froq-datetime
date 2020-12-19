@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\Date;
 
 use froq\date\Date;
-use froq\common\objects\StaticClass;
+use froq\common\object\StaticClass;
 use DateTime;
 
 /**
