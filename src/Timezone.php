@@ -97,8 +97,8 @@ class Timezone
     public static final function make(string $id): DateTimeZone
     {
         // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
-        self::isValidId($id) || throw new TimezoneException('Invalid timezone id `%s`, use UTC,'
-            . ' Xxx/Xxx, ±NN or ±NN:NN convention', $id);
+        self::isValidId($id) || throw new TimezoneException(
+            'Invalid timezone id `%s`, use UTC, Xxx/Xxx, ±NN or ±NN:NN convention', $id);
 
         try {
             return new DateTimeZone($id);
@@ -155,8 +155,8 @@ class Timezone
                     $ids = DateTimeZone::listIdentifiers($group, $country);
                 } else {
                     $constant = 'DateTimeZone::'. strtoupper($group);
-                    defined($constant) || throw new TimezoneException('Invalid group %s, use a valid'
-                        . ' DateTimeZone constant name', $group);
+                    defined($constant) || throw new TimezoneException(
+                        'Invalid group %s, use a valid DateTimeZone constant name', $group);
 
                     $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
                 }

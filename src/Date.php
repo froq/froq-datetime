@@ -101,8 +101,8 @@ class Date implements Arrayable, JsonSerializable
      */
     public function __construct(string|int|float $when = null, string $where = null, string $locale = null)
     {
-        $when = $when ?? '';
-        $where = $where ?? date_default_timezone_get();
+        $when  ??= '';
+        $where ??= date_default_timezone_get();
 
         try {
             $dateTimeZone = Timezone::make($where);
@@ -139,7 +139,7 @@ class Date implements Arrayable, JsonSerializable
 
         $this->dateTime     = $dateTime;
         $this->dateTimeZone = $dateTimeZone;
-        $this->locale       = $locale ?? (setlocale(LC_TIME, 0) ?: 'en_US.UTF-8');
+        $this->locale       = $locale ?? setlocale(LC_TIME, 0) ?: 'en_US.UTF-8';
     }
 
     /**
@@ -331,15 +331,15 @@ class Date implements Arrayable, JsonSerializable
     {
         // Memoize current stuff.
         static $currentLocale, $currentTimezone, $timezone;
-        $currentLocale ??= $this->locale;
+        $currentLocale   ??= $this->locale;
         $currentTimezone ??= date_default_timezone_get();
 
-        $locale = $locale ?? $currentLocale;
+        $locale     = $locale ?? $currentLocale;
         $timezone ??= ($currentTimezone != $this->getTimezone()) // Not needed for same timezones.
             ? $this->getTimezone() : null;
 
         // Locale may be null and was set once by another way (for system-wide usages).
-        $locale && setlocale(LC_TIME, $locale);
+        $locale   && setlocale(LC_TIME, $locale);
         $timezone && date_default_timezone_set($timezone);
 
         $ret = ($this->offset() != 0) // UTC check.
@@ -347,7 +347,7 @@ class Date implements Arrayable, JsonSerializable
              : gmstrftime($format ?? $this->localeFormat, $this->getTimestamp());
 
         // Restore.
-        $locale && setlocale(LC_TIME, $currentLocale);
+        $locale   && setlocale(LC_TIME, $currentLocale);
         $timezone && date_default_timezone_set($currentTimezone);
 
         return $ret;
@@ -459,10 +459,8 @@ class Date implements Arrayable, JsonSerializable
     {
         $now = new static();
 
-        if (!$now->dateTime->modify($content)) {
-            throw new DateException($now->dateTime->getLastErrors()['errors'][0]
-                ?? 'Failed to modify date');
-        }
+        $now->dateTime->modify($content) || throw new DateException(
+            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date');
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
@@ -478,10 +476,8 @@ class Date implements Arrayable, JsonSerializable
     {
         $now = new static();
 
-        if (!$now->dateTime->modify($content)) {
-            throw new DateException($now->dateTime->getLastErrors()['errors'][0]
-                ?? 'Failed to modify date');
-        }
+        $now->dateTime->modify($content) || throw new DateException(
+            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date');
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
@@ -494,7 +490,7 @@ class Date implements Arrayable, JsonSerializable
      */
     public static final function interval(string $content, int $time = null): int
     {
-        $time = $time ?? self::now();
+        $time ??= self::now();
 
         return strtotime($content, $time) - $time;
     }
