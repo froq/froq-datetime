@@ -57,10 +57,10 @@ class Timezone
     /**
      * Init.
      * @param  ... $args
-     * @return self (static)
+     * @return static
      * @since  4.0, 4.5 Replaced with make().
      */
-    public static final function init(...$args): self
+    public static final function init(...$args): static
     {
         return new static(...$args);
     }
@@ -68,10 +68,10 @@ class Timezone
     /**
      * Init single.
      * @param  ... $args
-     * @return self (static)
+     * @return static
      * @since  4.5
      */
-    public static final function initSingle(...$args): self
+    public static final function initSingle(...$args): static
     {
         return self::$instance ??= new static(...$args);
     }

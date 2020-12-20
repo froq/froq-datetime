@@ -154,9 +154,9 @@ class Date implements Arrayable, JsonSerializable
     /**
      * Init.
      * @param  ... $args
-     * @return self (static)
+     * @return static
      */
-    public static final function init(...$args): self
+    public static final function init(...$args): static
     {
         return new static(...$args);
     }
@@ -164,9 +164,9 @@ class Date implements Arrayable, JsonSerializable
     /**
      * Init single.
      * @param  ... $args
-     * @return self (static)
+     * @return static
      */
-    public static final function initSingle(...$args): self
+    public static final function initSingle(...$args): static
     {
         return self::$instance ??= new static(...$args);
     }
