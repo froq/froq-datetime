@@ -191,7 +191,7 @@ class Date implements Arrayable, JsonSerializable
     /**
      * Set timestamp.
      * @param  int $timestamp
-     * @return self (static)
+     * @return self
      */
     public final function setTimestamp(int $timestamp): self
     {
@@ -214,7 +214,7 @@ class Date implements Arrayable, JsonSerializable
     /**
      * Set timezone.
      * @param  string $where
-     * @return self (static)
+     * @return self
      */
     public final function setTimezone(string $where): self
     {
@@ -236,7 +236,7 @@ class Date implements Arrayable, JsonSerializable
     /**
      * Set format.
      * @param  string $format
-     * @return self (static)
+     * @return self
      */
     public final function setFormat(string $format): self
     {
@@ -280,7 +280,7 @@ class Date implements Arrayable, JsonSerializable
     /**
      * Set locale format.
      * @param  string $localeFormat
-     * @return self (static)
+     * @return self
      * @since  4.0, 4.5 Renamed from setFormatLocale().
      */
     public final function setLocaleFormat(string $localeFormat): self
