@@ -36,6 +36,7 @@ class Timezone
 
     /**
      * Constructor.
+     *
      * @param string $id
      * @since 4.5
      */
@@ -45,7 +46,8 @@ class Timezone
     }
 
     /**
-     * String magic.
+     * Magic - string.
+     *
      * @return string
      * @since  4.5
      */

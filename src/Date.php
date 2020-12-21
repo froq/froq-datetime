@@ -143,7 +143,7 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * String magic.
+     * Magic - string.
      * @return string
      */
     public function __toString()
