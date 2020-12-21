@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace froq\Date;
 
 use froq\date\TimezoneException;
+use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone, Throwable;
 
 /**
@@ -22,8 +23,11 @@ use DateTime, DateTimeZone, Throwable;
  */
 class Timezone
 {
-    /** @var self (static) @since 4.5 */
-    private static self $instance;
+    /**
+     * @see froq\common\trait\FactoryTrait
+     * @since 5.0
+     */
+    use FactoryTrait;
 
     /** @var array @since 4.5 */
     protected array $info;
@@ -48,30 +52,6 @@ class Timezone
     public function __toString()
     {
         return $this->info['id'];
-    }
-
-    /**
-     * Create a static instance.
-     *
-     * @param  ... $args
-     * @return static
-     * @since  4.0, 4.5 Replaced with make().
-     */
-    public static final function init(...$args): static
-    {
-        return new static(...$args);
-    }
-
-    /**
-     * Create a single static instance.
-     *
-     * @param  ... $args
-     * @return static
-     * @since  4.5
-     */
-    public static final function initSingle(...$args): static
-    {
-        return self::$instance ??= new static(...$args);
     }
 
     /**

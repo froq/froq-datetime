@@ -7,8 +7,9 @@ declare(strict_types=1);
 
 namespace froq\date;
 
+use froq\date\{DateException, UtcDate, Timezone, TimezoneException};
+use froq\common\trait\FactoryTrait;
 use froq\common\interface\{Arrayable, Stringable};
-use froq\date\{Date, UtcDate, DateException, Timezone, TimezoneException};
 use DateTime, DateTimeZone, Throwable, JsonSerializable;
 
 /**
@@ -23,6 +24,12 @@ use DateTime, DateTimeZone, Throwable, JsonSerializable;
  */
 class Date implements Arrayable, Stringable, JsonSerializable
 {
+    /**
+     * @see froq\common\trait\FactoryTrait
+     * @since 5.0
+     */
+    use FactoryTrait;
+
     /**
      * Intervals.
      * @const int
@@ -54,9 +61,6 @@ class Date implements Arrayable, Stringable, JsonSerializable
                  FORMAT_ISO_UTC_MS   = 'Y-m-d\TH:i:s.u\Z',
                  FORMAT_SQL          = self::FORMAT,            // @alias
                  FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
-
-    /** @var self (static) @since 4.5 */
-    private static self $instance;
 
     /** @var DateTime */
     protected DateTime $dateTime;
@@ -132,28 +136,6 @@ class Date implements Arrayable, Stringable, JsonSerializable
     public function __toString()
     {
         return $this->toString();
-    }
-
-    /**
-     * Create a static instance.
-     *
-     * @param  ... $args
-     * @return static
-     */
-    public static final function init(...$args): static
-    {
-        return new static(...$args);
-    }
-
-    /**
-     * Create a single static instance.
-     *
-     * @param  ... $args
-     * @return static
-     */
-    public static final function initSingle(...$args): static
-    {
-        return self::$instance ??= new static(...$args);
     }
 
     /**
