@@ -14,7 +14,7 @@ use DateTime, DateTimeZone, Throwable, JsonSerializable;
 /**
  * Date.
  *
- * Represents an extended date entity.
+ * Represents an extended date entity with some utility methods.
  *
  * @package froq\date
  * @object  froq\date\Date

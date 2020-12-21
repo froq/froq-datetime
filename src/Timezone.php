@@ -13,6 +13,8 @@ use DateTime, DateTimeZone, Throwable;
 /**
  * Timezone.
  *
+ * Represents an extended timezone entity with some utility methods.
+ *
  * @package froq\date
  * @object  froq\date\Timezone
  * @author  Kerem Güneş <k-gun@mail.com>
@@ -20,18 +22,10 @@ use DateTime, DateTimeZone, Throwable;
  */
 class Timezone
 {
-    /**
-     * Instance.
-     * @var self (static)
-     * @since 4.5
-     */
+    /** @var self (static) @since 4.5 */
     private static self $instance;
 
-    /**
-     * Info.
-     * @var array
-     * @since 4.5
-     */
+    /** @var array @since 4.5 */
     protected array $info;
 
     /**
@@ -46,7 +40,7 @@ class Timezone
     }
 
     /**
-     * Magic - string.
+     * Magic - string: returns "id" field from info stack.
      *
      * @return string
      * @since  4.5
@@ -57,7 +51,8 @@ class Timezone
     }
 
     /**
-     * Init.
+     * Create a static instance.
+     *
      * @param  ... $args
      * @return static
      * @since  4.0, 4.5 Replaced with make().
@@ -68,7 +63,8 @@ class Timezone
     }
 
     /**
-     * Init single.
+     * Create a single static instance.
+     *
      * @param  ... $args
      * @return static
      * @since  4.5
@@ -79,7 +75,8 @@ class Timezone
     }
 
     /**
-     * Info.
+     * Get info stack or only one field with given key.
+     *
      * @param  string|null $key
      * @return any
      * @since  4.5
@@ -90,7 +87,8 @@ class Timezone
     }
 
     /**
-     * Make.
+     * Create a DateTimeZone instance or throw a `TimezoneException` if an invalid id given.
+     *
      * @param  string $id
      * @return DateTimeZone
      * @throws froq\date\TimezoneException
@@ -110,33 +108,35 @@ class Timezone
     }
 
     /**
-     * Make info.
+     * Create info stack.
+     *
      * @param  string $id
      * @return array
      * @since  4.5
      */
     public static final function makeInfo(string $id): array
     {
-        $zone = self::make($id);
-        $date = new DateTime('', $zone);
+        $zone        = self::make($id);
+        $date        = new DateTime('', $zone);
 
-        $id = $zone->getName();
-        $name = str_replace(['/', '_'], [' / ', ' '], $id);
+        $id          = $zone->getName();
+        $name        = str_replace(['/', '_'], [' / ', ' '], $id);
         $transitions = $zone->getTransitions($date->getTimestamp(), $date->getTimestamp());
 
         return [
-            'id' => $id, 'name' => $name,
-            'offset' => $date->getOffset(), 'offsetCode' => $date->format('P'),
+            'id'         => $id,                'name'       => $name,
+            'offset'     => $date->getOffset(), 'offsetCode' => $date->format('P'),
             'transition' => [
-                'date' => $date->format('c'),
-                'time' => $transitions[0]['ts'], 'utime' => (float) $date->format('U.u'),
-                'abbr' => $transitions[0]['abbr'], 'dst' => $transitions[0]['isdst']
+                'date'   => $date->format('c'),
+                'time'   => $transitions[0]['ts'],    'utime' => (float) $date->format('U.u'),
+                'abbr'   => $transitions[0]['abbr'],  'dst'   => $transitions[0]['isdst']
             ]
         ];
     }
 
     /**
-     * List.
+     * List identifiers.
+     *
      * @param  string|int|null $group
      * @param  string|null     $country
      * @return array
@@ -170,6 +170,7 @@ class Timezone
         }
 
         $ret = [];
+
         if ($group == null) { // Always first..
             $ret[] = self::makeInfo('UTC');
         }
@@ -186,7 +187,7 @@ class Timezone
     }
 
     /**
-     * List by.
+     * List identifiers by given group and optionally by given country.
      * @param  string|int  $group
      * @param  string|null $country
      * @return array
@@ -197,7 +198,8 @@ class Timezone
     }
 
     /**
-     * List by country.
+     * List identifiers by given country.
+     *
      * @param  string|null $country
      * @return array
      */
