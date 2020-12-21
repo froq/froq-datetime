@@ -12,6 +12,8 @@ use froq\date\Date;
 /**
  * UTC Date.
  *
+ * Represents an extended UTC date entity that derived from date object.
+ *
  * @package froq\date
  * @object  froq\date\UtcDate
  * @author  Kerem Güneş <k-gun@mail.com>
@@ -21,6 +23,7 @@ class UtcDate extends Date
 {
     /**
      * Constructor.
+     *
      * @param string|int|float|null $when
      */
     public function __construct(string|int|float $when = null)

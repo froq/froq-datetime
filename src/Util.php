@@ -14,6 +14,8 @@ use DateTime;
 /**
  * Util.
  *
+ * Date/time utilities.
+ *
  * @package froq\date
  * @object  froq\date\Util
  * @author  Kerem Güneş <k-gun@mail.com>
@@ -23,19 +25,21 @@ use DateTime;
 final class Util extends StaticClass
 {
     /**
-     * Ago.
+     * Ago: get a string representation from given date/time input, optionanlly with given format,
+     * internationalization and showing time when available.
+     *
      * @param  string|int|float  $when
      * @param  string|null       $format
      * @param  array|nulll       $intl
      * @param  bool              $showTime
      * @return string
      */
-    public static final function ago($when, string $format = null, array $intl = null,
+    public static final function ago(string|int|float $when, string $format = null, array $intl = null,
         bool $showTime = true): string
     {
         // Both static.
         static $date, $dateNow; if (!$date || !$dateNow) {
-            $date = new DateTime();
+            $date    = new DateTime();
             $dateNow = new DateTime();
         }
 
@@ -63,14 +67,14 @@ final class Util extends StaticClass
             default:
                 if ($diff->h >= 1) {
                     return $diff->h .' '. (
-                        ($diff->h == 1) ? $intl['hour'] ?? 'hour'
+                        ($diff->h == 1) ? $intl['hour']  ?? 'hour'
                                         : $intl['hours'] ?? 'hours'
                     );
                 }
 
                 if ($diff->i >= 1) {
                     return $diff->i .' '. (
-                        ($diff->i == 1) ? $intl['minute'] ?? 'minute'
+                        ($diff->i == 1) ? $intl['minute']  ?? 'minute'
                                         : $intl['minutes'] ?? 'minutes'
                     );
                 }
@@ -80,19 +84,20 @@ final class Util extends StaticClass
     }
 
     /**
-     * Diff.
+     * Diff: get an array representation from given date/time calculating differences.
+     *
      * @param  string|int|float $when
      * @return array
      */
-    public static final function diff($when): array
+    public static final function diff(string|int|float $when): array
     {
-        $date = new DateTime($when = Date::init($when)->format('c'));
-        $dateNow = new DateTime();
+        $when = Date::init($when)->format('c');
 
-        $diff = $dateNow->diff($date);
+        $date = new DateTime($when);
+        $diff = (new DateTime)->diff($date);
 
-        return ['datetime' => $when, 'year' => $diff->y, 'month' => $diff->m, 'day' => $diff->d,
-                'days' => $diff->days, 'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
+        return ['datetime'    => $when,       'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
+                'days'        => $diff->days, 'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
                 'millisecond' => $diff->f];
     }
 }
