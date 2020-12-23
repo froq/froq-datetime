@@ -133,14 +133,14 @@ class Timezone
                 // Eg: tr => TR (for typos).
                 $country && $country = strtoupper($country);
 
-                if (is_int($group)) {
-                    $ids = DateTimeZone::listIdentifiers($group, $country);
-                } else {
+                if (is_string($group)) {
                     $constant = 'DateTimeZone::'. strtoupper($group);
                     defined($constant) || throw new TimezoneException(
                         'Invalid group %s, use a valid DateTimeZone constant name', $group);
 
                     $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
+                } else {
+                    $ids = DateTimeZone::listIdentifiers($group, $country);
                 }
             } else {
                 $ids = DateTimeZone::listIdentifiers();
