@@ -36,11 +36,12 @@ class Timezone
      * Constructor.
      *
      * @param string $id
+     * @param bool   $transition
      * @since 4.5
      */
-    public function __construct(string $id)
+    public function __construct(string $id, bool $transition = false)
     {
-        $this->info = self::makeInfo($id);
+        $this->info = self::makeInfo($id, $transition);
     }
 
     /**
@@ -91,27 +92,34 @@ class Timezone
      * Create info stack.
      *
      * @param  string $id
+     * @param  bool   $transition
      * @return array
      * @since  4.5
      */
-    public static final function makeInfo(string $id): array
+    public static final function makeInfo(string $id, bool $transition = false): array
     {
-        $zone        = self::make($id);
-        $date        = new DateTime('', $zone);
+        $zone = self::make($id);
+        $date = new DateTime('', $zone);
 
-        $id          = $zone->getName();
-        $name        = str_replace(['/', '_'], [' / ', ' '], $id);
-        $transitions = $zone->getTransitions($date->getTimestamp(), $date->getTimestamp());
+        $id   = $zone->getName();
+        $name = str_replace(['/', '_'], [' / ', ' '], $id);
 
-        return [
-            'id'         => $id,                'name'       => $name,
-            'offset'     => $date->getOffset(), 'offsetCode' => $date->format('P'),
-            'transition' => [
-                'date'   => $date->format('c'),
-                'time'   => $transitions[0]['ts'],    'utime' => (float) $date->format('U.u'),
-                'abbr'   => $transitions[0]['abbr'],  'dst'   => $transitions[0]['isdst']
-            ]
+        $info = [
+            'id'     => $id,                'name'       => $name,
+            'offset' => $date->getOffset(), 'offsetCode' => $date->format('P'),
         ];
+
+        if ($transition) {
+            $transitions = $zone->getTransitions($date->getTimestamp(), $date->getTimestamp());
+
+            $info['transition'] = [
+                'date' => $date->format('c'),
+                'time' => $transitions[0]['ts'],   'utime' => (float) $date->format('U.u'),
+                'abbr' => $transitions[0]['abbr'], 'dst'   => !!$transitions[0]['isdst']
+            ];
+        }
+
+        return $info;
     }
 
     /**
@@ -119,10 +127,11 @@ class Timezone
      *
      * @param  string|int|null $group
      * @param  string|null     $country
+     * @param  bool            $transition
      * @return array
      * @throws froq\date\TimezoneException
      */
-    public static final function list(string|int $group = null, string $country = null): array
+    public static final function list(string|int $group = null, string $country = null, bool $transition = false): array
     {
         if ($group == null && $country != null) {
             $group = DateTimeZone::PER_COUNTRY;
@@ -152,7 +161,7 @@ class Timezone
         $ret = [];
 
         if ($group == null) { // Always first..
-            $ret[] = self::makeInfo('UTC');
+            $ret[] = self::makeInfo('UTC', $transition);
         }
 
         foreach ($ids as $id) {
@@ -160,32 +169,34 @@ class Timezone
                 continue;
             }
 
-            $ret[] = self::makeInfo($id);
+            $ret[] = self::makeInfo($id, $transition);
         }
 
         return $ret;
     }
 
     /**
-     * List identifiers by given group and optionally by given country.
-     * @param  string|int  $group
-     * @param  string|null $country
+     * List identifiers by given group.
+     *
+     * @param  string|int $group
+     * @param  bool       $transition
      * @return array
      */
-    public static final function listBy($group, string $country = null): array
+    public static final function listByGroup(string|int $group, bool $transition = false): array
     {
-        return self::list($group, $country);
+        return self::list($group, null, $transition);
     }
 
     /**
      * List identifiers by given country.
      *
-     * @param  string|null $country
+     * @param  string $country
+     * @param  bool   $transition
      * @return array
      */
-    public static final function listByCountry($country): array
+    public static final function listByCountry(string $country, bool $transition = false): array
     {
-        return self::list(null, $country);
+        return self::list(null, $country, $transition);
     }
 
     /**
