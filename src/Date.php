@@ -143,7 +143,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      *
      * @return DateTime
      */
-    public final function geDateTime(): DateTime
+    public final function getDateTime(): DateTime
     {
         return $this->dateTime;
     }
@@ -152,7 +152,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      *
      * @return DateTimeZone
      */
-    public final function geDateTimeZone(): DateTimeZone
+    public final function getDateTimeZone(): DateTimeZone
     {
         return $this->dateTimeZone;
     }
