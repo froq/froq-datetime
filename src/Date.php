@@ -179,7 +179,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     public final function getTimestamp(bool $float = false): int|float
     {
         return !$float ? $this->dateTime->getTimestamp()
-             : (float) $this->dateTime->format('U.u');
+                       : (float) $this->dateTime->format('U.u');
     }
 
     /**
@@ -285,14 +285,14 @@ class Date implements Arrayable, Stringable, JsonSerializable
      * @param  bool $string
      * @return int|string
      */
-    public final function offset(bool $string = false)
+    public final function offset(bool $string = false): int|string
     {
         return !$string ? $this->dateTime->getOffset()
                         : $this->dateTime->format('P');
     }
 
     /**
-     * Format holding date.
+     * Format own date.
      *
      * @param  string|null $format
      * @return string
@@ -303,7 +303,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Format holding date by given or default locale.
+     * Format own date by given or default locale.
      *
      * @param  string|null $format
      * @param  string|null $locale
@@ -368,7 +368,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Get holding date as UTC date string.
+     * Get own date as UTC date string.
      *
      * @param  string|null $format
      * @return string
@@ -382,7 +382,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Get holding date as ISO date string.
+     * Get own date as ISO date string.
      *
      * @param  bool $ms
      * @return string
@@ -396,7 +396,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Get holding date as local date string.
+     * Get own date as local date string.
      *
      * @param  string|null $format
      * @return string
@@ -407,7 +407,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Get holding date as HTTP date string.
+     * Get own date as HTTP date string.
      *
      * @return string
      */
@@ -417,7 +417,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Get holding date as HTTP-Cookie date string.
+     * Get own date as HTTP-Cookie date string.
      *
      * @return string
      */
@@ -440,7 +440,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Now plus, to modify holding date by given content.
+     * Now plus, to modify own date by given content.
      *
      * @param  string      $content
      * @param  string|null $format
@@ -458,7 +458,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Now minus, to modify holding date by given content.
+     * Now minus, to modify own date by given content.
      *
      * @param  string      $content
      * @param  string|null $format
