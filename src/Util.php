@@ -28,10 +28,10 @@ final class Util extends StaticClass
      * Ago: get a string representation from given date/time input, optionanlly with given format,
      * internationalization and showing time when available.
      *
-     * @param  string|int|float  $when
-     * @param  string|null       $format
-     * @param  array|nulll       $intl
-     * @param  bool              $showTime
+     * @param  string|int|float $when
+     * @param  string|null      $format
+     * @param  array|nulll      $intl
+     * @param  bool             $showTime
      * @return string
      */
     public static final function ago(string|int|float $when, string $format = null, array $intl = null,
