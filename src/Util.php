@@ -86,9 +86,9 @@ final class Util extends StaticClass
     /**
      * Diff: get an array/string representation from given date(s)/time(s) calculating their differences.
      *
-     * @param  string|int|float $when1
-     * @param  string|int|float $when2 @default=now
-     * @param  string|null      $format
+     * @param  string|int|float      $when1
+     * @param  string|int|float|null $when2 @default=now
+     * @param  string|null           $format
      * @return array|string
      */
     public static final function diff(string|int|float $when1, string|int|float $when2 = null,
