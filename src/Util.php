@@ -84,20 +84,30 @@ final class Util extends StaticClass
     }
 
     /**
-     * Diff: get an array representation from given date/time calculating differences.
+     * Diff: get an array/string representation from given date(s)/time(s) calculating their differences.
      *
-     * @param  string|int|float $when
-     * @return array
+     * @param  string|int|float $when1
+     * @param  string|int|float $when2 @default=now
+     * @param  string|null      $format
+     * @return array|string
      */
-    public static final function diff(string|int|float $when): array
+    public static final function diff(string|int|float $when1, string|int|float $when2 = null,
+        string $format = null): array|string
     {
-        $when = Date::init($when)->format('c');
+        $when1 = Date::init($when1)->format('c');
+        $when2 = Date::init($when2)->format('c');
 
-        $date = new DateTime($when);
-        $diff = (new DateTime)->diff($date);
+        $date1 = new DateTime($when1);
+        $date2 = new DateTime($when2);
 
-        return ['datetime'    => $when,       'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
-                'days'        => $diff->days, 'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
+        if ($format != null) {
+            return $date1->diff($date2)->format($format);
+        }
+
+        $diff = $date1->diff($date2);
+
+        return ['dates'       => [$when1, $when2], 'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
+                'days'        => $diff->days,      'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
                 'millisecond' => $diff->f];
     }
 }
