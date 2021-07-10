@@ -1,44 +1,35 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-date
  */
 declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\common\interfaces\Arrayable;
-use froq\date\{Date, UtcDate, DateException, Timezone, TimezoneException};
+use froq\date\{DateException, UtcDate, Timezone, TimezoneException};
+use froq\common\interface\{Arrayable, Stringable};
+use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone, Throwable, JsonSerializable;
 
 /**
  * Date.
+ *
+ * Represents an extended date entity with some utility methods.
+ *
  * @package froq\date
  * @object  froq\date\Date
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   4.0
  */
-class Date implements Arrayable, JsonSerializable
+class Date implements Arrayable, Stringable, JsonSerializable
 {
+    /**
+     * @see froq\common\trait\FactoryTrait
+     * @since 5.0
+     */
+    use FactoryTrait;
+
     /**
      * Intervals.
      * @const int
@@ -71,56 +62,33 @@ class Date implements Arrayable, JsonSerializable
                  FORMAT_SQL          = self::FORMAT,            // @alias
                  FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
 
-    /**
-     * Instance.
-     * @var self (static)
-     * @since 4.5
-     */
-    private static self $instance;
-
-    /**
-     * Date time.
-     * @var DateTime
-     */
+    /** @var DateTime */
     protected DateTime $dateTime;
 
-    /**
-     * Date time zone.
-     * @var DateTimeZone
-     */
+    /** @var DateTimeZone */
     protected DateTimeZone $dateTimeZone;
 
-    /**
-     * Format.
-     * @var string
-     */
+    /** @var string */
     protected string $format = self::FORMAT;
 
-    /**
-     * Locale.
-     * @var string
-     * @since 4.5
-     */
+    /** @var string @since 4.5 */
     protected string $locale;
 
-    /**
-     * Locale format.
-     * @var string
-     * @since 4.0, 4.5 Renamed from $formatLocale.
-     */
+    /** @var string @since 4.0, 4.5 Renamed from $formatLocale. */
     protected string $localeFormat = self::FORMAT_LOCALE;
 
     /**
      * Constructor.
+     *
      * @param  string|int|float|null $when
      * @param  string|null           $where
      * @param  string|null           $locale
      * @throws froq\date\DateException
      */
-    public function __construct($when = null, string $where = null, string $locale = null)
+    public function __construct(string|int|float $when = null, string $where = null, string $locale = null)
     {
-        $when = $when ?? '';
-        $where = $where ?? date_default_timezone_get();
+        $when  ??= '';
+        $where ??= date_default_timezone_get();
 
         try {
             $dateTimeZone = Timezone::make($where);
@@ -136,17 +104,14 @@ class Date implements Arrayable, JsonSerializable
                     $dateTime = DateTime::createFromFormat('U.u', sprintf('%.6F', $when));
                     $dateTime->setTimezone($dateTimeZone);
                     break;
-                default:
-                    throw new DateException('Invalid date/time type "%s" given, valids are: '.
-                        'string, int, float, null', [get_type($when)]);
             }
-        } catch (DateException | TimezoneException $e) {
+        } catch (TimezoneException $e) {
             throw $e;
         } catch (Throwable $e) {
             throw new DateException($e);
         }
 
-        // @cancel: Let user pass proper arguments..
+        // @cancel: Let user pass proper args..
         // // Note: Since DateTime accepts a timezone as first argument ($when), we should make
         // // DateTimeZone's same here. Otherwise Date.DateTime & Date.DateTimeZone objects will
         // // have different timezones.
@@ -160,11 +125,12 @@ class Date implements Arrayable, JsonSerializable
 
         $this->dateTime     = $dateTime;
         $this->dateTimeZone = $dateTimeZone;
-        $this->locale       = $locale ?? (setlocale(LC_TIME, 0) ?: 'en_US.UTF-8');
+        $this->locale       = $locale ?? setlocale(LC_TIME, 0) ?: 'en_US.UTF-8';
     }
 
     /**
-     * String magic.
+     * Magic - string.
+     *
      * @return string
      */
     public function __toString()
@@ -173,46 +139,29 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * Init.
-     * @param  ... $arguments
-     * @return self (static)
-     */
-    public static final function init(...$arguments): self
-    {
-        return new static(...$arguments);
-    }
-
-    /**
-     * Init single.
-     * @param  ... $arguments
-     * @return self (static)
-     */
-    public static final function initSingle(...$arguments): self
-    {
-        return self::$instance ??= new static(...$arguments);
-    }
-
-    /**
-     * Date time.
+     * Get native "date time" instance.
+     *
      * @return DateTime
      */
-    public final function dateTime(): DateTime
+    public final function getDateTime(): DateTime
     {
         return $this->dateTime;
     }
     /**
-     * Date time zone.
+     * Get native "date time zone" instance.
+     *
      * @return DateTimeZone
      */
-    public final function dateTimeZone(): DateTimeZone
+    public final function getDateTimeZone(): DateTimeZone
     {
         return $this->dateTimeZone;
     }
 
     /**
      * Set timestamp.
+     *
      * @param  int $timestamp
-     * @return self (static)
+     * @return self
      */
     public final function setTimestamp(int $timestamp): self
     {
@@ -223,19 +172,21 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Get timestamp.
+     *
      * @param  bool $float
      * @return int|float
      */
-    public final function getTimestamp(bool $float = false)
+    public final function getTimestamp(bool $float = false): int|float
     {
         return !$float ? $this->dateTime->getTimestamp()
-             : (float) $this->dateTime->format('U.u');
+                       : (float) $this->dateTime->format('U.u');
     }
 
     /**
      * Set timezone.
+     *
      * @param  string $where
-     * @return self (static)
+     * @return self
      */
     public final function setTimezone(string $where): self
     {
@@ -247,6 +198,7 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Get timezone.
+     *
      * @return string
      */
     public final function getTimezone(): string
@@ -256,8 +208,9 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Set format.
+     *
      * @param  string $format
-     * @return self (static)
+     * @return self
      */
     public final function setFormat(string $format): self
     {
@@ -268,6 +221,7 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Get format.
+     *
      * @return string
      */
     public final function getFormat(): string
@@ -277,6 +231,7 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Set locale.
+     *
      * @param  string $locale
      * @return self
      * @since  4.5
@@ -290,6 +245,7 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Get locale.
+     *
      * @return string
      * @since  4.5
      */
@@ -300,8 +256,9 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Set locale format.
+     *
      * @param  string $localeFormat
-     * @return self (static)
+     * @return self
      * @since  4.0, 4.5 Renamed from setFormatLocale().
      */
     public final function setLocaleFormat(string $localeFormat): self
@@ -313,6 +270,7 @@ class Date implements Arrayable, JsonSerializable
 
     /**
      * Get locale format.
+     *
      * @return string
      * @since  4.0, 4.5 Renamed from getFormatLocale().
      */
@@ -322,18 +280,20 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * Offset.
+     * Get offset from UTC.
+     *
      * @param  bool $string
      * @return int|string
      */
-    public final function offset(bool $string = false)
+    public final function offset(bool $string = false): int|string
     {
         return !$string ? $this->dateTime->getOffset()
                         : $this->dateTime->format('P');
     }
 
     /**
-     * Format.
+     * Format own date.
+     *
      * @param  string|null $format
      * @return string
      */
@@ -343,7 +303,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * Format locale.
+     * Format own date by given or default locale.
+     *
      * @param  string|null $format
      * @param  string|null $locale
      * @return string
@@ -352,15 +313,15 @@ class Date implements Arrayable, JsonSerializable
     {
         // Memoize current stuff.
         static $currentLocale, $currentTimezone, $timezone;
-        $currentLocale ??= $this->locale;
+        $currentLocale   ??= $this->locale;
         $currentTimezone ??= date_default_timezone_get();
 
-        $locale = $locale ?? $currentLocale;
+        $locale     = $locale ?? $currentLocale;
         $timezone ??= ($currentTimezone != $this->getTimezone()) // Not needed for same timezones.
             ? $this->getTimezone() : null;
 
         // Locale may be null and was set once by another way (for system-wide usages).
-        $locale && setlocale(LC_TIME, $locale);
+        $locale   && setlocale(LC_TIME, $locale);
         $timezone && date_default_timezone_set($timezone);
 
         $ret = ($this->offset() != 0) // UTC check.
@@ -368,14 +329,15 @@ class Date implements Arrayable, JsonSerializable
              : gmstrftime($format ?? $this->localeFormat, $this->getTimestamp());
 
         // Restore.
-        $locale && setlocale(LC_TIME, $currentLocale);
+        $locale   && setlocale(LC_TIME, $currentLocale);
         $timezone && date_default_timezone_set($currentTimezone);
 
         return $ret;
     }
 
     /**
-     * To int.
+     * Alias of getTimestamp().
+     *
      * @return int
      */
     public final function toInt(): int
@@ -384,7 +346,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To float.
+     * Alias of getTimestamp() but with milliseconds.
+     *
      * @return float
      * @since  4.5
      */
@@ -394,7 +357,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To string.
+     * Alias of format().
+     *
      * @param  string|null $format
      * @return string
      */
@@ -404,7 +368,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To utc string.
+     * Get own date as UTC date string.
+     *
      * @param  string|null $format
      * @return string
      */
@@ -417,7 +382,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To iso string.
+     * Get own date as ISO date string.
+     *
      * @param  bool $ms
      * @return string
      * @since  4.3
@@ -430,7 +396,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To locale string.
+     * Get own date as local date string.
+     *
      * @param  string|null $format
      * @return string
      */
@@ -440,7 +407,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To http string.
+     * Get own date as HTTP date string.
+     *
      * @return string
      */
     public final function toHttpString(): string
@@ -449,7 +417,8 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * To http cookie string.
+     * Get own date as HTTP-Cookie date string.
+     *
      * @return string
      */
     public final function toHttpCookieString(): string
@@ -458,11 +427,12 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * Now.
+     * Alias for toInt() or toString().
+     *
      * @param  string|null $format
      * @return int|string
      */
-    public static final function now(string $format = null)
+    public static final function now(string $format = null): int|string
     {
         $now = new static();
 
@@ -470,56 +440,57 @@ class Date implements Arrayable, JsonSerializable
     }
 
     /**
-     * Now plus.
+     * Now plus, to modify own date by given content.
+     *
      * @param  string      $content
      * @param  string|null $format
      * @return int|string
      * @throws froq\date\DateException
      */
-    public static final function nowPlus(string $content, string $format = null)
+    public static final function nowPlus(string $content, string $format = null): int|string
     {
         $now = new static();
 
-        if (!$now->dateTime->modify($content)) {
-            throw new DateException('@error');
-        }
+        $now->dateTime->modify($content) || throw new DateException(
+            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date');
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
 
     /**
-     * Now minus.
+     * Now minus, to modify own date by given content.
+     *
      * @param  string      $content
      * @param  string|null $format
      * @return int|string
      * @throws froq\date\DateException
      */
-    public static final function nowMinus(string $content, string $format = null)
+    public static final function nowMinus(string $content, string $format = null): int|string
     {
         $now = new static();
 
-        if (!$now->dateTime->modify($content)) {
-            throw new DateException('@error');
-        }
+        $now->dateTime->modify($content) || throw new DateException(
+            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date');
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
 
     /**
-     * Interval.
+     * Get an interval from now() date.
+     *
      * @param  string   $content
      * @param  int|null $time
      * @return int
      */
     public static final function interval(string $content, int $time = null): int
     {
-        $time = $time ?? self::now();
+        $time ??= self::now();
 
         return strtotime($content, $time) - $time;
     }
 
     /**
-     * @inheritDoc froq\common\objects\Arrayable
+     * @inheritDoc froq\common\interface\Arrayable
      * @since      4.5
      */
     public function toArray(): array

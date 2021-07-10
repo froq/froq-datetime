@@ -1,70 +1,52 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-date
  */
 declare(strict_types=1);
 
-namespace froq\Date;
+namespace froq\date;
 
 use froq\date\TimezoneException;
+use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone, Throwable;
 
 /**
  * Timezone.
+ *
+ * Represents an extended timezone entity with some utility methods.
+ *
  * @package froq\date
  * @object  froq\date\Timezone
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   4.0
- * @static
  */
 class Timezone
 {
     /**
-     * Instance.
-     * @var self (static)
-     * @since 4.5
+     * @see froq\common\trait\FactoryTrait
+     * @since 5.0
      */
-    private static self $instance;
+    use FactoryTrait;
 
-    /**
-     * Info.
-     * @var array
-     * @since 4.5
-     */
+    /** @var array @since 4.5 */
     protected array $info;
 
     /**
      * Constructor.
+     *
      * @param string $id
+     * @param bool   $transition
      * @since 4.5
      */
-    public function __construct(string $id)
+    public function __construct(string $id, bool $transition = false)
     {
-        $this->info = self::makeInfo($id);
+        $this->info = self::makeInfo($id, $transition);
     }
 
     /**
-     * String magic.
+     * Magic - string: returns "id" field from info stack.
+     *
      * @return string
      * @since  4.5
      */
@@ -74,29 +56,8 @@ class Timezone
     }
 
     /**
-     * Init.
-     * @param  ... $arguments
-     * @return self (static)
-     * @since  4.0, 4.5 Replaced with make().
-     */
-    public static final function init(...$arguments): self
-    {
-        return new static(...$arguments);
-    }
-
-    /**
-     * Init single.
-     * @param  ... $arguments
-     * @return self (static)
-     * @since  4.5
-     */
-    public static final function initSingle(...$arguments): self
-    {
-        return self::$instance ??= new static(...$arguments);
-    }
-
-    /**
-     * Info.
+     * Get info stack or only one field with given key.
+     *
      * @param  string|null $key
      * @return any
      * @since  4.5
@@ -107,7 +68,8 @@ class Timezone
     }
 
     /**
-     * Make.
+     * Create a DateTimeZone instance or throw a `TimezoneException` if an invalid id given.
+     *
      * @param  string $id
      * @return DateTimeZone
      * @throws froq\date\TimezoneException
@@ -116,10 +78,8 @@ class Timezone
     public static final function make(string $id): DateTimeZone
     {
         // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
-        if (!self::isValidId($id)) {
-            throw new TimezoneException('Invalid timezone id "%s", use UTC, XXX/XXX, ±XX or '.
-                '±XX:XX conventions', [$id]);
-        }
+        self::isValidId($id) || throw new TimezoneException(
+            'Invalid timezone id `%s`, use UTC, Xxx/Xxx, ±NN or ±NN:NN convention', $id);
 
         try {
             return new DateTimeZone($id);
@@ -129,39 +89,49 @@ class Timezone
     }
 
     /**
-     * Make info.
+     * Create info stack.
+     *
      * @param  string $id
+     * @param  bool   $transition
      * @return array
      * @since  4.5
      */
-    public static final function makeInfo(string $id): array
+    public static final function makeInfo(string $id, bool $transition = false): array
     {
         $zone = self::make($id);
         $date = new DateTime('', $zone);
 
-        $id = $zone->getName();
+        $id   = $zone->getName();
         $name = str_replace(['/', '_'], [' / ', ' '], $id);
-        $transitions = $zone->getTransitions($date->getTimestamp(), $date->getTimestamp());
 
-        return [
-            'id' => $id, 'name' => $name,
+        $info = [
+            'id'     => $id,                'name'       => $name,
             'offset' => $date->getOffset(), 'offsetCode' => $date->format('P'),
-            'transition' => [
-                'date' => $date->format('c'),
-                'time' => $transitions[0]['ts'], 'utime' => (float) $date->format('U.u'),
-                'abbr' => $transitions[0]['abbr'], 'dst' => $transitions[0]['isdst']
-            ]
         ];
+
+        if ($transition) {
+            $transitions = $zone->getTransitions($date->getTimestamp(), $date->getTimestamp());
+
+            $info['transition'] = [
+                'date' => $date->format('c'),
+                'time' => $transitions[0]['ts'],   'utime' => (float) $date->format('U.u'),
+                'abbr' => $transitions[0]['abbr'], 'dst'   => !!$transitions[0]['isdst']
+            ];
+        }
+
+        return $info;
     }
 
     /**
-     * List.
+     * List identifiers.
+     *
      * @param  string|int|null $group
      * @param  string|null     $country
+     * @param  bool            $transition
      * @return array
      * @throws froq\date\TimezoneException
      */
-    public static final function list($group = null, string $country = null): array
+    public static final function list(string|int $group = null, string $country = null, bool $transition = false): array
     {
         if ($group == null && $country != null) {
             $group = DateTimeZone::PER_COUNTRY;
@@ -169,23 +139,17 @@ class Timezone
 
         try {
             if ($group != null) {
-                if ($country != null) { // Eg: tr => TR (for typos).
-                    $country = strtoupper($country);
-                }
+                // Eg: tr => TR (for typos).
+                $country && $country = strtoupper($country);
 
-                if (is_int($group)) {
-                    $ids = DateTimeZone::listIdentifiers($group, $country);
-                } elseif (is_string($group)) {
+                if (is_string($group)) {
                     $constant = 'DateTimeZone::'. strtoupper($group);
-                    if (!defined($constant)) {
-                        throw new TimezoneException('Invalid group "%s" given, use valid '.
-                            'DateTimeZone constant', [$group]);
-                    }
+                    defined($constant) || throw new TimezoneException(
+                        'Invalid group %s, use a valid DateTimeZone constant name', $group);
 
                     $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
                 } else {
-                    throw new TimezoneException('Invalid group type "%s" given, valids are: '.
-                        'int, string, null', [gettype($group)]);
+                    $ids = DateTimeZone::listIdentifiers($group, $country);
                 }
             } else {
                 $ids = DateTimeZone::listIdentifiers();
@@ -195,8 +159,9 @@ class Timezone
         }
 
         $ret = [];
+
         if ($group == null) { // Always first..
-            $ret[] = self::makeInfo('UTC');
+            $ret[] = self::makeInfo('UTC', $transition);
         }
 
         foreach ($ids as $id) {
@@ -204,31 +169,34 @@ class Timezone
                 continue;
             }
 
-            $ret[] = self::makeInfo($id);
+            $ret[] = self::makeInfo($id, $transition);
         }
 
         return $ret;
     }
 
     /**
-     * List by.
-     * @param  string|int  $group
-     * @param  string|null $country
+     * List identifiers by given group.
+     *
+     * @param  string|int $group
+     * @param  bool       $transition
      * @return array
      */
-    public static final function listBy($group, string $country = null): array
+    public static final function listByGroup(string|int $group, bool $transition = false): array
     {
-        return self::list($group, $country);
+        return self::list($group, null, $transition);
     }
 
     /**
-     * List by country.
-     * @param  string|null $country
+     * List identifiers by given country.
+     *
+     * @param  string $country
+     * @param  bool   $transition
      * @return array
      */
-    public static final function listByCountry($country): array
+    public static final function listByCountry(string $country, bool $transition = false): array
     {
-        return self::list(null, $country);
+        return self::list(null, $country, $transition);
     }
 
     /**

@@ -1,59 +1,45 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-date
  */
 declare(strict_types=1);
 
-namespace froq\Date;
+namespace froq\date;
 
 use froq\date\Date;
-use froq\common\objects\StaticClass;
+use froq\common\object\StaticClass;
 use DateTime;
 
 /**
  * Util.
+ *
+ * Date/time utilities.
+ *
  * @package froq\date
  * @object  froq\date\Util
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   4.0
  * @static
  */
 final class Util extends StaticClass
 {
     /**
-     * Ago.
-     * @param  string|int  $when
-     * @param  string|null $format
-     * @param  array|nulll $intl
-     * @param  bool        $showTime
+     * Ago: get a string representation from given date/time input, optionanlly with given format,
+     * internationalization and showing time when available.
+     *
+     * @param  string|int|float $when
+     * @param  string|null      $format
+     * @param  array|nulll      $intl
+     * @param  bool             $showTime
      * @return string
      */
-    public static final function ago($when, string $format = null, array $intl = null,
+    public static final function ago(string|int|float $when, string $format = null, array $intl = null,
         bool $showTime = true): string
     {
         // Both static.
         static $date, $dateNow; if (!$date || !$dateNow) {
-            $date = new DateTime();
+            $date    = new DateTime();
             $dateNow = new DateTime();
         }
 
@@ -81,14 +67,14 @@ final class Util extends StaticClass
             default:
                 if ($diff->h >= 1) {
                     return $diff->h .' '. (
-                        ($diff->h == 1) ? $intl['hour'] ?? 'hour'
+                        ($diff->h == 1) ? $intl['hour']  ?? 'hour'
                                         : $intl['hours'] ?? 'hours'
                     );
                 }
 
                 if ($diff->i >= 1) {
                     return $diff->i .' '. (
-                        ($diff->i == 1) ? $intl['minute'] ?? 'minute'
+                        ($diff->i == 1) ? $intl['minute']  ?? 'minute'
                                         : $intl['minutes'] ?? 'minutes'
                     );
                 }
@@ -98,19 +84,30 @@ final class Util extends StaticClass
     }
 
     /**
-     * Diff.
-     * @param  string|int $when
-     * @return array
+     * Diff: get an array/string representation from given date(s)/time(s) calculating their differences.
+     *
+     * @param  string|int|float      $when1
+     * @param  string|int|float|null $when2 @default=now
+     * @param  string|null           $format
+     * @return array|string
      */
-    public static final function diff($when): array
+    public static final function diff(string|int|float $when1, string|int|float $when2 = null,
+        string $format = null): array|string
     {
-        $date = new DateTime($when = Date::init($when)->format('c'));
-        $dateNow = new DateTime();
+        $when1 = Date::init($when1)->format('c');
+        $when2 = Date::init($when2)->format('c');
 
-        $diff = $dateNow->diff($date);
+        $date1 = new DateTime($when1);
+        $date2 = new DateTime($when2);
 
-        return ['datetime' => $when, 'year' => $diff->y, 'month' => $diff->m, 'day' => $diff->d,
-                'days' => $diff->days, 'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
+        if ($format != null) {
+            return $date1->diff($date2)->format($format);
+        }
+
+        $diff = $date1->diff($date2);
+
+        return ['dates'       => [$when1, $when2], 'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
+                'days'        => $diff->days,      'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
                 'millisecond' => $diff->f];
     }
 }
