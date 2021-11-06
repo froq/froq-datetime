@@ -10,7 +10,7 @@ namespace froq\date;
 use froq\date\{DateException, UtcDate, Timezone, TimezoneException};
 use froq\common\interface\{Arrayable, Stringable};
 use froq\common\trait\FactoryTrait;
-use DateTime, DateTimeZone, Throwable, JsonSerializable;
+use Throwable, DateTime, DateTimeZone, JsonSerializable;
 
 /**
  * Date.
@@ -452,7 +452,8 @@ class Date implements Arrayable, Stringable, JsonSerializable
         $now = new static();
 
         $now->dateTime->modify($content) || throw new DateException(
-            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date');
+            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date'
+        );
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
@@ -470,7 +471,8 @@ class Date implements Arrayable, Stringable, JsonSerializable
         $now = new static();
 
         $now->dateTime->modify($content) || throw new DateException(
-            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date');
+            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date'
+        );
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
