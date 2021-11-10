@@ -86,16 +86,21 @@ final class Util extends StaticClass
     /**
      * Diff: get an array/string representation from given date(s)/time(s) calculating their differences.
      *
-     * @param  string|int|float      $when1
-     * @param  string|int|float|null $when2 @default=now
-     * @param  string|null           $format
+     * @param  string|int|float|Date|DateTime      $when1
+     * @param  string|int|float|Date|DateTime|null $when2 @default=now
+     * @param  string|null                         $format
      * @return array|string
      */
-    public static final function diff(string|int|float $when1, string|int|float $when2 = null,
-        string $format = null): array|string
+    public static function diff(string|int|float|Date|DateTime $when1,
+                                string|int|float|Date|DateTime $when2 = null,
+                                string $format = null): array|string
     {
-        $when1 = Date::init($when1)->format('c');
-        $when2 = Date::init($when2)->format('c');
+        // When no object given.
+        is_object($when1) || $when1 = Date::init($when1);
+        is_object($when2) || $when2 = Date::init($when2);
+
+        $when1 = $when1->format(Date::FORMAT_ISO_MS);
+        $when2 = $when2->format(Date::FORMAT_ISO_MS);
 
         $date1 = new DateTime($when1);
         $date2 = new DateTime($when2);
@@ -106,9 +111,10 @@ final class Util extends StaticClass
 
         $diff = $date1->diff($date2);
 
-        return ['dates'       => [$when1, $when2], 'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
-                'days'        => $diff->days,      'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
-                'millisecond' => $diff->f];
+        return [
+            'dates'       => [$when1, $when2], 'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
+            'days'        => $diff->days,      'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
+            'millisecond' => (int) substr((string) $diff->f, 2)
+        ];
     }
 }
-
