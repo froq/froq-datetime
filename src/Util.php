@@ -34,7 +34,7 @@ final class Util extends StaticClass
      * @param  bool             $showTime
      * @return string
      */
-    public static final function ago(string|int|float $when, string $format = null, array $intl = null,
+    public static function ago(string|int|float $when, string $format = null, array $intl = null,
         bool $showTime = true): string
     {
         // Both static.
