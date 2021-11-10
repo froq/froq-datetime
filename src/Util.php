@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\date\Date;
+use froq\date\{Date, Diff};
 use froq\common\object\StaticClass;
 use DateTime;
 
@@ -116,5 +116,21 @@ final class Util extends StaticClass
             'days'        => $diff->days,      'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
             'millisecond' => (int) substr((string) $diff->f, 2)
         ];
+    }
+
+    /**
+     * Diff: get an instance of Diff representation from given date(s)/time(s) calculating their differences.
+     *
+     * @param  string|int|float|Date|DateTime      $when1
+     * @param  string|int|float|Date|DateTime|null $when2 @default=now
+     * @return froq\date\Diff
+     * @since  5.2
+     */
+    public static function diffOf(string|int|float|Date|DateTime $when1,
+                                  string|int|float|Date|DateTime $when2 = null): Diff
+    {
+        $diff = self::diff($when1, $when2);
+
+        return new Diff(...$diff);
     }
 }

@@ -22,11 +22,24 @@ final class Unixtime
 {
     /**
      * Now.
+     *
      * @return int
      */
     public static function now(): int
     {
         return time();
+    }
+
+    /**
+     * Convert given date to unixtime.
+     *
+     * @param  string $when
+     * @return int
+     * @since  5.2
+     */
+    public static function from(string $when): int
+    {
+        return strtotime($when);
     }
 }
 
