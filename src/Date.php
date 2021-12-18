@@ -125,7 +125,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
 
         $this->dateTime     = $dateTime;
         $this->dateTimeZone = $dateTimeZone;
-        $this->locale       = $locale ?? setlocale(LC_TIME, 0) ?: 'en_US.UTF-8';
+        $this->locale       = $locale ?? (setlocale(LC_TIME, 0) ?: 'en_US.UTF-8');
     }
 
     /**
@@ -312,21 +312,24 @@ class Date implements Arrayable, Stringable, JsonSerializable
     public final function formatLocale(string $format = null, string $locale = null): string
     {
         // Memoize current stuff.
-        static $currentLocale, $currentTimezone, $timezone;
+        static $currentLocale, $currentTimezone;
         $currentLocale   ??= $this->locale;
         $currentTimezone ??= date_default_timezone_get();
 
-        $locale     = $locale ?? $currentLocale;
-        $timezone ??= ($currentTimezone != $this->getTimezone()) // Not needed for same timezones.
-            ? $this->getTimezone() : null;
+        [$timezone, $timestamp, $format] = [$this->getTimezone(), $this->getTimestamp(),
+            $format ?? $this->getLocaleFormat()];
+
+        // Not needed for same stuff.
+        $locale   = ($locale && $locale !== $currentLocale) ? $locale : null;
+        $timezone = ($timezone !== $currentTimezone) ? $timezone : null;
 
         // Locale may be null and was set once by another way (for system-wide usages).
         $locale   && setlocale(LC_TIME, $locale);
         $timezone && date_default_timezone_set($timezone);
 
-        $ret = ($this->offset() != 0) // UTC check.
-             ? strftime($format ?? $this->localeFormat, $this->getTimestamp())
-             : gmstrftime($format ?? $this->localeFormat, $this->getTimestamp());
+        $ret = ($this->offset() <> 0) // UTC check.
+             ? strftime($format, $this->getTimestamp())
+             : gmstrftime($format, $this->getTimestamp());
 
         // Restore.
         $locale   && setlocale(LC_TIME, $currentLocale);
@@ -390,7 +393,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      */
     public final function toIsoString(): string
     {
-        return ($this->offset() != 0) // UTC check.
+        return ($this->offset() <> 0) // UTC check.
              ? $this->format(self::FORMAT_ISO_MS)
              : $this->format(self::FORMAT_ISO_UTC_MS);
     }
