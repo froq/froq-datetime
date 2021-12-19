@@ -83,7 +83,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      * @param  string|int|float|null $when
      * @param  string|null           $where
      * @param  string|null           $locale
-     * @throws froq\date\DateException
+     * @throws froq\date\{TimezoneException,DateException}
      */
     public function __construct(string|int|float $when = null, string $where = null, string $locale = null)
     {
@@ -125,7 +125,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
 
         $this->dateTime     = $dateTime;
         $this->dateTimeZone = $dateTimeZone;
-        $this->locale       = $locale ?? (setlocale(LC_TIME, 0) ?: 'en_US.UTF-8');
+        $this->locale       = $locale ?? getlocale(LC_TIME, default: 'en_US.UTF-8');
     }
 
     /**
