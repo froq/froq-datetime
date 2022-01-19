@@ -12,7 +12,7 @@ use froq\common\interface\{Arrayable, Objectable};
 /**
  * Diff.
  *
- * Represents a read-only diff entity that intented to use internally.
+ * Represents a read-only diff entry.
  *
  * @package froq\date
  * @object  froq\date\DateException
@@ -20,37 +20,20 @@ use froq\common\interface\{Arrayable, Objectable};
  * @since   5.2
  * @internal
  */
-class Diff implements Arrayable, Objectable
+final class Diff implements Arrayable, Objectable
 {
     /**
      * Constructor.
      */
     public function __construct(
-        /** @var array */
         private array $dates,
-
-        /** @var int */
         private int $year,
-
-        /** @var int */
         private int $month,
-
-        /** @var int */
         private int $day,
-
-        /** @var int */
         private int $days,
-
-        /** @var int */
         private int $hour,
-
-        /** @var int */
         private int $minute,
-
-        /** @var int */
         private int $second,
-
-        /** @var int */
         private int $millisecond,
     )
     {}
@@ -145,9 +128,7 @@ class Diff implements Arrayable, Objectable
         return $this->millisecond;
     }
 
-    /**
-     * @inheritDoc froq\common\interface\Arrayable
-     */
+    /** @inheritDoc froq\common\interface\Arrayable */
     public function toArray(): array
     {
         return [
@@ -157,9 +138,7 @@ class Diff implements Arrayable, Objectable
         ];
     }
 
-    /**
-     * @inheritDoc froq\common\interface\Objectable
-     */
+    /** @inheritDoc froq\common\interface\Objectable */
     public function toObject(): object
     {
         return (object) $this->toArray();

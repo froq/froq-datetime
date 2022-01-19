@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\date;
 
 use froq\date\{Date, Diff};
-use froq\common\object\StaticClass;
+use StaticClass;
 use DateTime;
 
 /**
@@ -25,7 +25,7 @@ use DateTime;
 final class Util extends StaticClass
 {
     /**
-     * Ago: get a string representation from given date/time input, optionanlly with given format,
+     * Get a string representation from given date/time input, optionanlly with given format,
      * internationalization and showing time when available.
      *
      * @param  string|int|float $when
@@ -84,16 +84,15 @@ final class Util extends StaticClass
     }
 
     /**
-     * Diff: get an array/string representation from given date(s)/time(s) calculating their differences.
+     * Get an array/string representation from given date(s)/time(s) calculating their differences.
      *
      * @param  string|int|float|Date|DateTime      $when1
      * @param  string|int|float|Date|DateTime|null $when2 @default=now
      * @param  string|null                         $format
      * @return array|string
      */
-    public static function diff(string|int|float|Date|DateTime $when1,
-                                string|int|float|Date|DateTime $when2 = null,
-                                string $format = null): array|string
+    public static function diff(string|int|float|Date|DateTime $when1, string|int|float|Date|DateTime $when2 = null,
+        string $format = null): array|string
     {
         // When no object given.
         is_object($when1) || $when1 = Date::init($when1);
@@ -119,15 +118,14 @@ final class Util extends StaticClass
     }
 
     /**
-     * Diff: get an instance of Diff representation from given date(s)/time(s) calculating their differences.
+     * Get an instance of Diff representation from given date(s)/time(s) calculating their differences.
      *
      * @param  string|int|float|Date|DateTime      $when1
      * @param  string|int|float|Date|DateTime|null $when2 @default=now
      * @return froq\date\Diff
      * @since  5.2
      */
-    public static function diffOf(string|int|float|Date|DateTime $when1,
-                                  string|int|float|Date|DateTime $when2 = null): Diff
+    public static function diffOf(string|int|float|Date|DateTime $when1, string|int|float|Date|DateTime $when2 = null): Diff
     {
         $diff = self::diff($when1, $when2);
 
