@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace froq\date;
 
 use froq\date\{Date, Diff};
-use StaticClass;
 use DateTime;
 
 /**
@@ -22,7 +21,7 @@ use DateTime;
  * @since   4.0
  * @static
  */
-final class Util extends StaticClass
+final class Util extends \StaticClass
 {
     /**
      * Get a string representation from given date/time input, optionanlly with given format,
