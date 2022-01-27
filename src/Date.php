@@ -512,7 +512,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      * @inheritDoc JsonSerializable
      * @since      4.5
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->toIsoString();
     }
