@@ -112,9 +112,9 @@ class Date implements Arrayable, Stringable, JsonSerializable
         }
 
         // @cancel: Let user pass proper args..
-        // // Note: Since DateTime accepts a timezone as first argument ($when), we should make
-        // // DateTimeZone's same here. Otherwise Date.DateTime & Date.DateTimeZone objects will
-        // // have different timezones.
+        // Note: Since DateTime accepts a timezone as first argument ($when), we should make
+        // DateTimeZone's same here. Otherwise Date.DateTime & Date.DateTimeZone objects will
+        // have different timezones.
         // $zone1 = $dateTime->getTimezone()->getName();
         // $zone2 = $dateTimeZone->getName();
         // if ($zone1 != $zone2) {
