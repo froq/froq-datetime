@@ -111,7 +111,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
             throw new DateException($e);
         }
 
-        // @cancel: Let user pass proper args..
+        // @cancel: Let user pass proper args.
         // Note: Since DateTime accepts a timezone as first argument ($when), we should make
         // DateTimeZone's same here. Otherwise Date.DateTime & Date.DateTimeZone objects will
         // have different timezones.
