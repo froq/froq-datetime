@@ -45,7 +45,7 @@ class Timezone
     }
 
     /**
-     * Magic - string: returns "id" field from info stack.
+     * Magic string, returns "id" field from info data.
      *
      * @return string
      * @since  4.5
@@ -56,7 +56,7 @@ class Timezone
     }
 
     /**
-     * Get info stack or only one field with given key.
+     * Get info data or only one field with given key.
      *
      * @param  string|null $key
      * @return any
@@ -90,7 +90,7 @@ class Timezone
     }
 
     /**
-     * Create info stack.
+     * Create info data.
      *
      * @param  string $id
      * @param  bool   $transition
