@@ -45,10 +45,11 @@ class Timezone
     }
 
     /**
-     * Magic string, returns "id" field from info data.
+     * Return "id" field from info data.
      *
      * @return string
      * @since  4.5
+     * @magic
      */
     public function __toString()
     {
