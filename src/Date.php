@@ -7,27 +7,23 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\date\{DateException, UtcDate, Timezone, TimezoneException};
 use froq\common\interface\{Arrayable, Stringable};
 use froq\common\trait\FactoryTrait;
-use Throwable, DateTime, DateTimeZone, JsonSerializable;
+use Throwable, DateTime, DateTimeZone;
 
 /**
  * Date.
  *
- * Represents an extended date entity with some utility methods.
+ * An extended date class with some utility methods.
  *
  * @package froq\date
  * @object  froq\date\Date
  * @author  Kerem Güneş
  * @since   4.0
  */
-class Date implements Arrayable, Stringable, JsonSerializable
+class Date implements Arrayable, Stringable, \JsonSerializable
 {
-    /**
-     * @see froq\common\trait\FactoryTrait
-     * @since 5.0
-     */
+    /** @see froq\common\trait\FactoryTrait */
     use FactoryTrait;
 
     /**
@@ -71,10 +67,10 @@ class Date implements Arrayable, Stringable, JsonSerializable
     /** @var string */
     protected string $format = self::FORMAT;
 
-    /** @var string @since 4.5 */
+    /** @var string */
     protected string $locale;
 
-    /** @var string @since 4.0, 4.5 Renamed from $formatLocale. */
+    /** @var string */
     protected string $localeFormat = self::FORMAT_LOCALE;
 
     /**
@@ -128,11 +124,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
         $this->locale       = $locale ?? getlocale(LC_TIME, default: 'en_US.UTF-8');
     }
 
-    /**
-     * Magic - string.
-     *
-     * @return string
-     */
+    /** @magic */
     public function __toString()
     {
         return $this->toString();
@@ -259,7 +251,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      *
      * @param  string $localeFormat
      * @return self
-     * @since  4.0, 4.5 Renamed from setFormatLocale().
+     * @since  4.0, 4.5
      */
     public final function setLocaleFormat(string $localeFormat): self
     {
@@ -272,7 +264,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
      * Get locale format.
      *
      * @return string
-     * @since  4.0, 4.5 Renamed from getFormatLocale().
+     * @since  4.0, 4.5
      */
     public final function getLocaleFormat(): string
     {
@@ -339,7 +331,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Alias of getTimestamp().
+     * Alias for getTimestamp().
      *
      * @return int
      */
@@ -349,7 +341,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Alias of getTimestamp() but with milliseconds.
+     * Alias for getTimestamp(), with milliseconds.
      *
      * @return float
      * @since  4.5
@@ -360,7 +352,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
-     * Alias of format().
+     * Alias for format().
      *
      * @param  string|null $format
      * @return string
@@ -496,7 +488,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
 
     /**
      * @inheritDoc froq\common\interface\Arrayable
-     * @since      4.5
+     * @since 4.5
      */
     public function toArray(): array
     {
@@ -510,7 +502,7 @@ class Date implements Arrayable, Stringable, JsonSerializable
 
     /**
      * @inheritDoc JsonSerializable
-     * @since      4.5
+     * @since 4.5
      */
     public function jsonSerialize(): string
     {
