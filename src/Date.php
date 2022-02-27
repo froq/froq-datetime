@@ -124,8 +124,13 @@ class Date implements Arrayable, Stringable, \JsonSerializable
         $this->locale       = $locale ?? getlocale(LC_TIME, default: 'en_US.UTF-8');
     }
 
-    /** @magic */
-    public function __toString()
+    /**
+     * Return formatted date representation.
+     *
+     * @return string
+     * @magic
+     */
+    public function __toString(): string
     {
         return $this->toString();
     }

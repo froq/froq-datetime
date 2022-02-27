@@ -14,7 +14,7 @@ use Throwable, DateTime, DateTimeZone;
 /**
  * Timezone.
  *
- * Represents an extended timezone entity with some utility methods.
+ * An extended timezone class with some utility methods.
  *
  * @package froq\date
  * @object  froq\date\Timezone
@@ -23,13 +23,10 @@ use Throwable, DateTime, DateTimeZone;
  */
 class Timezone
 {
-    /**
-     * @see froq\common\trait\FactoryTrait
-     * @since 5.0
-     */
+    /** @see froq\common\trait\FactoryTrait */
     use FactoryTrait;
 
-    /** @var array @since 4.5 */
+    /** @var array */
     protected array $info;
 
     /**
@@ -51,7 +48,7 @@ class Timezone
      * @since  4.5
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->info['id'];
     }
@@ -60,21 +57,21 @@ class Timezone
      * Get info data or only one field with given key.
      *
      * @param  string|null $key
-     * @return any
+     * @return mixed|null
      * @since  4.5
      */
-    public final function info(string $key = null)
+    public final function info(string $key = null): mixed
     {
         return !$key ? $this->info : $this->info[$key] ?? null;
     }
 
     /**
-     * Create a DateTimeZone instance or throw a `TimezoneException` if an invalid id given.
+     * Create a DateTimeZone instance or throw a `TimezoneException` if an invalid ID given.
      *
      * @param  string $id
      * @return DateTimeZone
      * @throws froq\date\TimezoneException
-     * @since  4.5 Taken from init().
+     * @since  4.5
      */
     public static final function make(string $id): DateTimeZone
     {
@@ -203,7 +200,8 @@ class Timezone
     }
 
     /**
-     * Is valid id.
+     * Check ID validity.
+     *
      * @param  string $id
      * @return bool
      */
@@ -215,7 +213,7 @@ class Timezone
         }
 
         // Eg: "UTC", "+03", "+03:00" or "Europe/Istanbul".
-        if ($id != 'UTC' && !preg_match('~^\w+/\w+|[+-]\d{2}(?:[:]\d{2})?$~', $id)) {
+        if ($id != 'UTC' && !preg_test('~^\w+/\w+|[+-]\d{2}(?:[:]\d{2})?$~', $id)) {
             return false;
         }
 
