@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\common\Exception;
-
 /**
  * Timezone Exception.
  *
@@ -17,5 +15,5 @@ use froq\common\Exception;
  * @author  Kerem Güneş
  * @since   4.5
  */
-class TimezoneException extends Exception
+class TimezoneException extends DateException
 {}

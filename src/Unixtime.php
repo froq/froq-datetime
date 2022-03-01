@@ -15,7 +15,7 @@ namespace froq\date;
  * @package froq\date
  * @object  froq\date\Unixtime
  * @author  Kerem Güneş
- * @since   4.0, 5.0 Renamed from Timestamp.
+ * @since   4.0, 5.0
  * @static
  */
 final class Unixtime

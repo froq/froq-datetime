@@ -9,7 +9,7 @@ namespace froq\date;
 
 use froq\common\interface\{Arrayable, Stringable};
 use froq\common\trait\FactoryTrait;
-use Throwable, DateTime, DateTimeZone;
+use DateTime, DateTimeZone;
 
 /**
  * Date.
@@ -103,7 +103,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
             }
         } catch (TimezoneException $e) {
             throw $e;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             throw new DateException($e);
         }
 

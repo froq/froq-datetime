@@ -7,9 +7,8 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\date\TimezoneException;
 use froq\common\trait\FactoryTrait;
-use Throwable, DateTime, DateTimeZone;
+use DateTime, DateTimeZone;
 
 /**
  * Timezone.
@@ -82,7 +81,7 @@ class Timezone
 
         try {
             return new DateTimeZone($id);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             throw new TimezoneException($e);
         }
     }
@@ -154,7 +153,7 @@ class Timezone
             } else {
                 $ids = DateTimeZone::listIdentifiers();
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             throw new TimezoneException($e);
         }
 

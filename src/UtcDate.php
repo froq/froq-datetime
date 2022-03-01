@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\date\Date;
-
 /**
  * UTC Date.
  *

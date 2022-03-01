@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\date\{Date, Diff};
 use DateTime;
 
 /**
@@ -103,7 +102,7 @@ final class Util extends \StaticClass
         $date1 = new DateTime($when1);
         $date2 = new DateTime($when2);
 
-        if ($format != null) {
+        if ($format) {
             return $date1->diff($date2)->format($format);
         }
 
