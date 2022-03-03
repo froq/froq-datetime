@@ -10,7 +10,7 @@ namespace froq\date;
 /**
  * UTC Date.
  *
- * Represents an extended UTC date entity that derived from date object.
+ * A extended UTC date class, derived from `Date` class.
  *
  * @package froq\date
  * @object  froq\date\UtcDate
