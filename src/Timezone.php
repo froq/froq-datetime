@@ -22,7 +22,6 @@ use DateTime, DateTimeZone;
  */
 class Timezone
 {
-    /** @see froq\common\trait\FactoryTrait */
     use FactoryTrait;
 
     /** @var array */

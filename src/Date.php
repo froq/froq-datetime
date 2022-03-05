@@ -23,7 +23,6 @@ use DateTime, DateTimeZone;
  */
 class Date implements Arrayable, Stringable, \JsonSerializable
 {
-    /** @see froq\common\trait\FactoryTrait */
     use FactoryTrait;
 
     /**
