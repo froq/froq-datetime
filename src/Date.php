@@ -29,33 +29,33 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      * Intervals.
      * @const int
      */
-    public const ONE_MINUTE = 60,
-                 ONE_HOUR   = 3600,
-                 ONE_DAY    = 86400,
-                 ONE_WEEK   = 604800, // 86400 * 7
-                 ONE_MONTH  = 2592000, // 86400 * 30
-                 ONE_YEAR   = 31536000; // 86400 * 365
+    public final const ONE_MINUTE = 60,
+                       ONE_HOUR   = 3600,
+                       ONE_DAY    = 86400,
+                       ONE_WEEK   = 604800, // 86400 * 7
+                       ONE_MONTH  = 2592000, // 86400 * 30
+                       ONE_YEAR   = 31536000; // 86400 * 365
 
     /**
      * Formats.
      * @const string
      */
-    public const FORMAT              = 'Y-m-d H:i:s',           // @default
-                 FORMAT_TZ           = 'Y-m-d H:i:s P',
-                 FORMAT_MS           = 'Y-m-d H:i:s.u',
-                 FORMAT_TZ_MS        = 'Y-m-d H:i:s.u P',
-                 FORMAT_LOCALE       = '%d %B %Y, %R',
-                 FORMAT_LOCALE_SHORT = '%d %B %Y',
-                 FORMAT_AGO          = '%d %B %Y, %R',
-                 FORMAT_AGO_SHORT    = '%d %B %Y',
-                 FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
-                 FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP,       // @rfc6265
-                 FORMAT_ISO          = 'Y-m-d\TH:i:sP',
-                 FORMAT_ISO_MS       = 'Y-m-d\TH:i:s.uP',
-                 FORMAT_ISO_UTC      = 'Y-m-d\TH:i:s\Z',
-                 FORMAT_ISO_UTC_MS   = 'Y-m-d\TH:i:s.u\Z',
-                 FORMAT_SQL          = self::FORMAT,            // @alias
-                 FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
+    public final const FORMAT              = 'Y-m-d H:i:s',           // @default
+                       FORMAT_TZ           = 'Y-m-d H:i:s P',
+                       FORMAT_MS           = 'Y-m-d H:i:s.u',
+                       FORMAT_TZ_MS        = 'Y-m-d H:i:s.u P',
+                       FORMAT_LOCALE       = '%d %B %Y, %R',
+                       FORMAT_LOCALE_SHORT = '%d %B %Y',
+                       FORMAT_AGO          = '%d %B %Y, %R',
+                       FORMAT_AGO_SHORT    = '%d %B %Y',
+                       FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
+                       FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP,       // @rfc6265
+                       FORMAT_ISO          = 'Y-m-d\TH:i:sP',
+                       FORMAT_ISO_MS       = 'Y-m-d\TH:i:s.uP',
+                       FORMAT_ISO_UTC      = 'Y-m-d\TH:i:s\Z',
+                       FORMAT_ISO_UTC_MS   = 'Y-m-d\TH:i:s.u\Z',
+                       FORMAT_SQL          = self::FORMAT,            // @alias
+                       FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
 
     /** @var DateTime */
     protected DateTime $dateTime;
