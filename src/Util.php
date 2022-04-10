@@ -42,7 +42,7 @@ final class Util extends \StaticClass
         }
 
         // Just update/modify timestamp.
-        $date->setTimestamp(Date::init($when)->getTimestamp());
+        $date->setTimestamp((new Date($when))->getTimestamp());
 
         switch ($diff = $dateNow->diff($date)) {
             // Yesterday.
@@ -93,8 +93,8 @@ final class Util extends \StaticClass
         string $format = null): array|string
     {
         // When no object given.
-        is_object($when1) || $when1 = Date::init($when1);
-        is_object($when2) || $when2 = Date::init($when2);
+        is_object($when1) || $when1 = new Date($when1);
+        is_object($when2) || $when2 = new Date($when2);
 
         $when1 = $when1->format(Date::FORMAT_ISO_MS);
         $when2 = $when2->format(Date::FORMAT_ISO_MS);
