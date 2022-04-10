@@ -15,7 +15,7 @@ use froq\common\interface\{Arrayable, Objectable};
  * A read-only diff entry class.
  *
  * @package froq\date
- * @object  froq\date\DateException
+ * @object  froq\date\Diff
  * @author  Kerem Güneş
  * @since   5.2
  * @internal
