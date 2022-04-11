@@ -288,7 +288,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Format own date.
+     * Format date.
      *
      * @param  string|null $format
      * @return string
@@ -299,13 +299,14 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Format own date by given or default locale.
+     * Format date by given or default locale.
      *
      * @param  string|null $format
      * @param  string|null $locale
+     * @param  array|null  $intl
      * @return string
      */
-    public final function formatLocale(string $format = null, string $locale = null): string
+    public final function formatLocale(string $format = null, string $locale = null, array $intl = null): string
     {
         // Memoize current stuff.
         static $currentLocale, $currentTimezone;
@@ -323,9 +324,17 @@ class Date implements Arrayable, Stringable, \JsonSerializable
         $locale   && setlocale(LC_TIME, $locale);
         $timezone && date_default_timezone_set($timezone);
 
-        $ret = ($this->offset() <> 0) // UTC check.
-             ? strftime($format, $this->getTimestamp())
-             : gmstrftime($format, $this->getTimestamp());
+        if (PHP_VERSION_ID < 8010) {
+            $ret = ($this->offset() <> 0) // UTC check.
+                 ? strftime($format, $this->getTimestamp())
+                 : gmstrftime($format, $this->getTimestamp());
+        } else {
+            $formatter = new Formatter($intl, $format, $locale);
+
+            $ret = ($this->offset() <> 0) // UTC check.
+                 ? $formatter->format($this)
+                 : $formatter->formatUtc($this);
+        }
 
         // Restore.
         $locale   && setlocale(LC_TIME, $currentLocale);
@@ -367,7 +376,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Get own date as UTC date string.
+     * Get date as UTC date string.
      *
      * @param  string|null $format
      * @return string
@@ -381,7 +390,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Get own date as ISO date string.
+     * Get date as ISO date string.
      *
      * @param  bool $ms
      * @return string
@@ -395,7 +404,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Get own date as local date string.
+     * Get date as local date string.
      *
      * @param  string|null $format
      * @return string
@@ -406,7 +415,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Get own date as HTTP date string.
+     * Get date as HTTP date string.
      *
      * @return string
      */
@@ -416,7 +425,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Get own date as HTTP-Cookie date string.
+     * Get date as HTTP-Cookie date string.
      *
      * @return string
      */
@@ -439,7 +448,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Now plus, to modify own date by given content.
+     * Now plus, to modify date by given content.
      *
      * @param  string      $content
      * @param  string|null $format
@@ -458,7 +467,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Now minus, to modify own date by given content.
+     * Now minus, to modify date by given content.
      *
      * @param  string      $content
      * @param  string|null $format
