@@ -23,9 +23,6 @@ class Formatter
     use FactoryTrait;
 
     /** @var array */
-    private static array $map;
-
-    /** @var array */
     protected array $intl;
 
     /** @var string */
@@ -33,6 +30,9 @@ class Formatter
 
     /** @var string */
     protected string $locale;
+
+    /** @var ?array */
+    private static ?array $map = null;
 
     /**
      * Constructor.
@@ -46,6 +46,9 @@ class Formatter
         $this->setIntl($intl ?: []);
         $this->setFormat($format ?: '');
         $this->setLocale($locale ?: getlocale(LC_TIME, default: 'en_US.UTF-8'));
+
+        // Reset reqiured.
+        self::$map = null;
     }
 
     /**
@@ -122,7 +125,7 @@ class Formatter
     /**
      * Get locale.
      *
-     * @return string.
+     * @return string
      */
     public function getLocale(): string
     {
@@ -147,8 +150,6 @@ class Formatter
         $format = $format ?: $this->format
             ?: throw new FormatterException('No format yet, call setFormat() or pass $format argument');
 
-        $this->checkMap();
-
         if (!$when instanceof Date) {
             if ($when instanceof DateTime) {
                 $when = new Date($when->format(Date::FORMAT_ISO_MS));
@@ -156,6 +157,8 @@ class Formatter
                 $when = new Date($when);
             }
         }
+
+        $this->createMap();
 
         $out = preg_replace_callback('~(?<!%)(%[a-z])~i', function ($match) use ($when) {
             if ($match[1] == '%n') return "\n";
@@ -199,7 +202,7 @@ class Formatter
     /**
      * Create a static format map for once.
      */
-    private function checkMap(): void
+    private function createMap(): void
     {
         self::$map ??= [
             // Day.
