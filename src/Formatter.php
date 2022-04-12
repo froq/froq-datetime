@@ -31,8 +31,8 @@ class Formatter
     /** @var string */
     protected string $locale;
 
-    /** @var ?array */
-    private static ?array $map = null;
+    /** @var array */
+    private array $map;
 
     /**
      * Constructor.
@@ -46,9 +46,6 @@ class Formatter
         $this->setIntl($intl ?: []);
         $this->setFormat($format ?: '');
         $this->setLocale($locale ?: Locale::default());
-
-        // Reset reqiured.
-        self::$map = null;
     }
 
     /**
@@ -164,7 +161,7 @@ class Formatter
             if ($match[1] == '%n') return "\n";
             if ($match[1] == '%t') return "\t";
 
-            $replace = self::$map[$match[1]] ??
+            $replace = $this->map[$match[1]] ??
                 throw new FormatterException('Invalid format: `%s`', $match[1]);
 
             // So, why man? Dunno..
@@ -204,7 +201,7 @@ class Formatter
      */
     private function createMap(): void
     {
-        self::$map ??= [
+        $this->map ??= [
             // Day.
             '%A' => fn($date) => $this->getDay($date),
             '%a' => fn($date) => $this->getDayAbbr($date),
