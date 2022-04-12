@@ -22,6 +22,9 @@ class Timezone
 {
     use FactoryTrait;
 
+    /** @const string */
+    public final const DEFAULT = 'UTC';
+
     /** @var array */
     protected array $info;
 
@@ -257,5 +260,19 @@ class Timezone
 
         return true;
     }
-}
 
+    /**
+     * Set/get default timezone.
+     *
+     * @param  string|null $id
+     * @return string
+     */
+    public static function default(string $id = null): string
+    {
+        if ($id !== null) {
+            date_default_timezone_set($id);
+        }
+
+        return date_default_timezone_get() ?: self::DEFAULT;
+    }
+}
