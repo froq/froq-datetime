@@ -35,45 +35,43 @@ final class Util extends \StaticClass
     public static function ago(string|int|float $when, string $format = null, array $intl = null,
         bool $showTime = true): string
     {
-        // Both static.
-        static $date, $dateNow; if (!$date || !$dateNow) {
-            $date    = new DateTime();
-            $dateNow = new DateTime();
-        }
+        static $date, $dateNow, $formatter;
+
+        $date ??= new DateTime();
+        $dateNow ??= new DateTime();
+        $formatter ??= new Formatter();
 
         // Just update/modify timestamp.
         $date->setTimestamp((new Date($when))->getTimestamp());
+
+        $formatter->setIntl($intl ?? []);
+        $formatterExec = fn($format) => $formatter->format($date, $format);
 
         switch ($diff = $dateNow->diff($date)) {
             // Yesterday.
             case ($diff->days == 1):
                 $yesterday = $intl['yesterday'] ?? 'Yesterday';
-                return $showTime ? $yesterday .', '. strftime('%H:%M', $date->getTimestamp())
-                                 : $yesterday;
+                return $showTime ? $yesterday .', '. $formatterExec('%H:%M') : $yesterday;
 
             // 2-7 days.
             case ($diff->days >= 2 && $diff->days <= 7):
-                return $showTime ? strftime('%A, %H:%M', $date->getTimestamp())
-                                 : strftime('%A', $date->getTimestamp());
+                return $showTime ? $formatterExec('%A, %H:%M') : $formatterExec('%A');
 
             // Week & more.
             case ($diff->days > 7):
-                $format ??= ($showTime ? Date::FORMAT_AGO : Date::FORMAT_AGO_SHORT);
-                return strftime($format, $date->getTimestamp());
+                return $formatterExec($format ?? ($showTime ? Date::FORMAT_AGO : Date::FORMAT_AGO_SHORT));
 
             // Hours, minutes, now.
             default:
                 if ($diff->h >= 1) {
                     return $diff->h .' '. (
-                        ($diff->h == 1) ? $intl['hour']  ?? 'hour'
-                                        : $intl['hours'] ?? 'hours'
+                        $diff->h == 1 ? $intl['hour'] ?? 'hour' : $intl['hours'] ?? 'hours'
                     );
                 }
 
                 if ($diff->i >= 1) {
                     return $diff->i .' '. (
-                        ($diff->i == 1) ? $intl['minute']  ?? 'minute'
-                                        : $intl['minutes'] ?? 'minutes'
+                        $diff->i == 1 ? $intl['minute'] ?? 'minute' : $intl['minutes'] ?? 'minutes'
                     );
                 }
 

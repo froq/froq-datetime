@@ -324,17 +324,11 @@ class Date implements Arrayable, Stringable, \JsonSerializable
         $locale   && setlocale(LC_TIME, $locale);
         $timezone && date_default_timezone_set($timezone);
 
-        if (PHP_VERSION_ID < 8010) {
-            $ret = ($this->offset() <> 0) // UTC check.
-                 ? strftime($format, $this->getTimestamp())
-                 : gmstrftime($format, $this->getTimestamp());
-        } else {
-            $formatter = new Formatter($intl, $format, $locale);
+        $formatter = new Formatter($intl, $format, $locale);
 
-            $ret = ($this->offset() <> 0) // UTC check.
-                 ? $formatter->format($this)
-                 : $formatter->formatUtc($this);
-        }
+        $ret = ($this->offset() <> 0) // UTC check.
+             ? $formatter->format($this)
+             : $formatter->formatUtc($this);
 
         // Restore.
         $locale   && setlocale(LC_TIME, $currentLocale);
