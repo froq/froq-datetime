@@ -45,7 +45,7 @@ class Formatter
     {
         $this->setIntl($intl ?: []);
         $this->setFormat($format ?: '');
-        $this->setLocale($locale ?: getlocale(LC_TIME, default: 'en_US.UTF-8'));
+        $this->setLocale($locale ?: Locale::default());
 
         // Reset reqiured.
         self::$map = null;

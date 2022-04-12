@@ -86,7 +86,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
 
         $this->dateTime     = $dateTime;
         $this->dateTimeZone = $dateTimeZone;
-        $this->locale       = $locale ?? getlocale(LC_TIME, default: 'en_US.UTF-8');
+        $this->locale       = $locale ?? Locale::default();
     }
 
     /**

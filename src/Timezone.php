@@ -267,7 +267,7 @@ class Timezone
      * @param  string|null $id
      * @return string
      */
-    public static function default(string $id = null): string
+    public static final function default(string $id = null): string
     {
         if ($id !== null) {
             date_default_timezone_set($id);
