@@ -80,51 +80,33 @@ final class Util extends \StaticClass
     }
 
     /**
-     * Get an array/string representation from given date(s)/time(s) calculating their differences.
+     * Get an diff/string representation from given date(s)/time(s) calculating their differences.
      *
-     * @param  string|int|float|Date|DateTime      $when1
-     * @param  string|int|float|Date|DateTime|null $when2 @default=now
-     * @param  string|null                         $format
-     * @return array|string
+     * @param  string|int|float|Date|DateTime $when1
+     * @param  string|int|float|Date|DateTime $when2 @default=now
+     * @param  string|null                    $format
+     * @return string|Diff
      */
-    public static function diff(string|int|float|Date|DateTime $when1, string|int|float|Date|DateTime $when2 = null,
-        string $format = null): array|string
+    public static function diff(string|int|float|Date|DateTime $when1, string|int|float|Date|DateTime $when2 = '',
+        string $format = null): string|Diff
     {
         // When no object given.
         is_object($when1) || $when1 = new Date($when1);
         is_object($when2) || $when2 = new Date($when2);
 
-        $when1 = $when1->format(Date::FORMAT_ISO_MS);
-        $when2 = $when2->format(Date::FORMAT_ISO_MS);
-
-        $date1 = new DateTime($when1);
-        $date2 = new DateTime($when2);
-
-        if ($format) {
-            return $date1->diff($date2)->format($format);
-        }
+        $date1 = new DateTime($when1->format(Date::FORMAT_ISO_MS));
+        $date2 = new DateTime($when2->format(Date::FORMAT_ISO_MS));
 
         $diff = $date1->diff($date2);
 
-        return [
-            'dates'       => [$when1, $when2], 'year' => $diff->y, 'month'  => $diff->m, 'day'    => $diff->d,
-            'days'        => $diff->days,      'hour' => $diff->h, 'minute' => $diff->i, 'second' => $diff->s,
-            'millisecond' => (int) substr((string) $diff->f, 2)
-        ];
-    }
+        if ($format) {
+            return $diff->format($format);
+        }
 
-    /**
-     * Get an instance of Diff representation from given date(s)/time(s) calculating their differences.
-     *
-     * @param  string|int|float|Date|DateTime      $when1
-     * @param  string|int|float|Date|DateTime|null $when2 @default=now
-     * @return froq\date\Diff
-     * @since  5.2
-     */
-    public static function diffOf(string|int|float|Date|DateTime $when1, string|int|float|Date|DateTime $when2 = null): Diff
-    {
-        $diff = self::diff($when1, $when2);
-
-        return new Diff(...$diff);
+        return new Diff(
+            year: (int) $diff->y, month: (int) $diff->m, day: (int) $diff->d,
+            days: (int) $diff->days, hour: (int) $diff->h, minute: (int) $diff->i,
+            second: (int) $diff->s, millisecond: (int) substr((string) $diff->f, 2),
+        );
     }
 }
