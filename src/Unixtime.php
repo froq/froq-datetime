@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\date;
 
 /**
- * Unixtime.
- *
  * Just for only syntactic sugar delight.
  *
  * @package froq\date
@@ -18,7 +16,7 @@ namespace froq\date;
  * @since   4.0, 5.0
  * @static
  */
-final class Unixtime
+class Unixtime
 {
     /**
      * Now.
@@ -35,7 +33,6 @@ final class Unixtime
      *
      * @param  string $when
      * @return int
-     * @since  5.2
      */
     public static function from(string $when): int
     {

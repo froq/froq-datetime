@@ -11,8 +11,6 @@ use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone;
 
 /**
- * Timezone.
- *
  * An extended timezone class with some utility methods.
  *
  * @package froq\date
@@ -58,7 +56,7 @@ class Timezone
      * @return mixed|null
      * @since  4.5
      */
-    public final function info(string $key = null): mixed
+    public function info(string $key = null): mixed
     {
         return !$key ? $this->info : $this->info[$key] ?? null;
     }
@@ -71,7 +69,7 @@ class Timezone
      * @throws froq\date\TimezoneException
      * @since  4.5
      */
-    public static final function make(string $id): DateTimeZone
+    public static function make(string $id): DateTimeZone
     {
         // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
         self::isValidId($id) || throw new TimezoneException(
@@ -93,7 +91,7 @@ class Timezone
      * @return array
      * @since  4.5
      */
-    public static final function makeInfo(string $id, bool $transition = false): array
+    public static function makeInfo(string $id, bool $transition = false): array
     {
         $zone = self::make($id);
         $date = new DateTime('', $zone);
@@ -128,7 +126,7 @@ class Timezone
      * @return array
      * @throws froq\date\TimezoneException
      */
-    public static final function list(string|int $group = null, string $country = null, bool $transition = false): array
+    public static function list(string|int $group = null, string $country = null, bool $transition = false): array
     {
         if ($group == null && $country != null) {
             $group = DateTimeZone::PER_COUNTRY;
@@ -180,7 +178,7 @@ class Timezone
      * @param  bool       $transition
      * @return array
      */
-    public static final function listByGroup(string|int $group, bool $transition = false): array
+    public static function listByGroup(string|int $group, bool $transition = false): array
     {
         return self::list($group, null, $transition);
     }
@@ -192,7 +190,7 @@ class Timezone
      * @param  bool   $transition
      * @return array
      */
-    public static final function listByCountry(string $country, bool $transition = false): array
+    public static function listByCountry(string $country, bool $transition = false): array
     {
         return self::list(null, $country, $transition);
     }
@@ -203,7 +201,7 @@ class Timezone
      * @param  string $id
      * @return bool
      */
-    public static final function isValidId(string $id): bool
+    public static function isValidId(string $id): bool
     {
         // Eg: "Z" is not valid.
         if (!$id || strlen($id) < 3) {

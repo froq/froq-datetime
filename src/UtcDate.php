@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\date;
 
 /**
- * UTC Date.
- *
  * A extended UTC date class, derived from `Date` class.
  *
  * @package froq\date

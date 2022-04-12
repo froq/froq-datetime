@@ -10,8 +10,6 @@ namespace froq\date;
 use DateTime;
 
 /**
- * Util.
- *
  * Date/time utilities.
  *
  * @package froq\date

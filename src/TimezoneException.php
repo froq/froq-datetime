@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\date;
 
 /**
- * Timezone Exception.
- *
  * @package froq\date
  * @object  froq\date\TimezoneException
  * @author  Kerem Güneş

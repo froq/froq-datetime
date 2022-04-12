@@ -10,8 +10,6 @@ namespace froq\date;
 use froq\common\Exception;
 
 /**
- * Date Exception.
- *
  * @package froq\date
  * @object  froq\date\DateException
  * @author  Kerem Güneş
