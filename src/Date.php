@@ -49,7 +49,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     public function __construct(string|int|float $when = null, string $where = null, string $locale = null)
     {
         $when  ??= '';
-        $where ??= date_default_timezone_get();
+        $where ??= Timezone::default();
 
         try {
             $dateTimeZone = Timezone::make($where);
@@ -140,8 +140,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function getTimestamp(bool $float = false): int|float
     {
-        return !$float ? $this->dateTime->getTimestamp()
-                       : (float) $this->dateTime->format('U.u');
+        return !$float ? $this->dateTime->getTimestamp() : (float) $this->dateTime->format('U.u');
     }
 
     /**
@@ -152,7 +151,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function setTimezone(string $where): self
     {
-        $this->dateTimeZone = new DateTimeZone($where);
+        $this->dateTimeZone = Timezone::make($where);
         $this->dateTime->setTimezone($this->dateTimeZone);
 
         return $this;
@@ -249,8 +248,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function offset(bool $string = false): int|string
     {
-        return !$string ? $this->dateTime->getOffset()
-                        : $this->dateTime->format('P');
+        return !$string ? $this->dateTime->getOffset() : $this->dateTime->format('P');
     }
 
     /**
@@ -274,33 +272,10 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function formatLocale(string $format = null, string $locale = null, array $intl = null): string
     {
-        // Memoize current stuff.
-        static $currentLocale, $currentTimezone;
-        $currentLocale   ??= $this->locale;
-        $currentTimezone ??= date_default_timezone_get();
+        $formatter = new Formatter($intl, $format ?? $this->localeFormat, $locale ?? $this->locale);
 
-        [$timezone, $timestamp, $format] = [$this->getTimezone(), $this->getTimestamp(),
-            $format ?? $this->localeFormat];
-
-        // Not needed for same stuff.
-        $locale   = ($locale && $locale !== $currentLocale) ? $locale : null;
-        $timezone = ($timezone !== $currentTimezone) ? $timezone : null;
-
-        // Locale may be null and was set once by another way (for system-wide usages).
-        $locale   && setlocale(LC_TIME, $locale);
-        $timezone && date_default_timezone_set($timezone);
-
-        $formatter = new Formatter($intl, $format, $locale);
-
-        $ret = ($this->offset() <> 0) // UTC check.
-             ? $formatter->format($this)
-             : $formatter->formatUtc($this);
-
-        // Restore.
-        $locale   && setlocale(LC_TIME, $currentLocale);
-        $timezone && date_default_timezone_set($currentTimezone);
-
-        return $ret;
+        return ($this->offset() <> 0) // UTC check.
+             ? $formatter->format($this) : $formatter->formatUtc($this);
     }
 
     /**
@@ -314,10 +289,9 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Alias for getTimestamp(), with milliseconds.
+     * Alias for getTimestamp() with milliseconds.
      *
      * @return float
-     * @since  4.5
      */
     public function toFloat(): float
     {
@@ -357,15 +331,12 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     /**
      * Get date as ISO date string.
      *
-     * @param  bool $ms
      * @return string
-     * @since  4.3
      */
     public function toIsoString(): string
     {
         return ($this->offset() <> 0) // UTC check.
-             ? $this->format(Format::ISO_MS)
-             : $this->format(Format::ISO_UTC_MS);
+             ? $this->format(Format::ISO_MS) : $this->format(Format::ISO_UTC_MS);
     }
 
     /**
