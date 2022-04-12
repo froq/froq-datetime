@@ -50,6 +50,46 @@ class Timezone
     }
 
     /**
+     * Get id.
+     *
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->info['id'];
+    }
+
+    /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->info['name'];
+    }
+
+    /**
+     * Get offset.
+     *
+     * @return int
+     */
+    public function getOffset(): int
+    {
+        return $this->info['offset'];
+    }
+
+    /**
+     * Get offset code.
+     *
+     * @return string
+     */
+    public function getOffsetCode(): string
+    {
+        return $this->info['offsetCode'];
+    }
+
+    /**
      * Get info data or only one field with given key.
      *
      * @param  string|null $key
