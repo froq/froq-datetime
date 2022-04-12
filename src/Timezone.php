@@ -196,12 +196,14 @@ class Timezone
 
         $ret = [];
 
-        if ($group == null) { // Always first..
+        // Always first.
+        if ($group == null) {
             $ret[] = self::makeInfo('UTC', $transition);
         }
 
         foreach ($ids as $id) {
-            if ($group == null && $id == 'UTC') { // Already set first.
+            // Already set first.
+            if ($group == null && $id == 'UTC') {
                 continue;
             }
 
