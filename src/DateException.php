@@ -7,13 +7,11 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\common\Exception;
-
 /**
  * @package froq\date
  * @object  froq\date\DateException
  * @author  Kerem Güneş
  * @since   4.0
  */
-class DateException extends Exception
+class DateException extends \froq\common\Exception
 {}
