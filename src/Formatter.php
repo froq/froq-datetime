@@ -147,12 +147,12 @@ class Formatter
             $format = $format->getPattern();
         }
 
-        $format = $format ?: $this->format
-            ?: throw new FormatterException('No format yet, call setFormat() or pass $format argument');
+        $format = $format ?: $this->format ?:
+            throw new FormatterException('No format yet, call setFormat() or pass $format argument');
 
         if (!$when instanceof Date) {
-            if ($when instanceof DateTime) {
-                $when = new Date($when->format(Format::ISO_MS));
+            if (is_object($when)) {
+                $when = new Date((float) $when->format('U.u'), $when->getDateTimeZone()->getName());
             } else {
                 $when = new Date($when);
             }
@@ -164,8 +164,8 @@ class Formatter
             if ($match[1] == '%n') return "\n";
             if ($match[1] == '%t') return "\t";
 
-            $replace = self::$map[$match[1]]
-                ?? throw new FormatterException('Invalid format: `%s`', $match[1]);
+            $replace = self::$map[$match[1]] ??
+                throw new FormatterException('Invalid format: `%s`', $match[1]);
 
             // So, why man? Dunno..
             [$date, $when] = [$when, null];
@@ -189,8 +189,8 @@ class Formatter
     public function formatUtc(string|int|float|Date|DateTime $when, string|Format $format = null): string
     {
         if (!$when instanceof UtcDate) {
-            if ($when instanceof DateTime) {
-                $when = new UtcDate($when->format(Format::ISO_MS));
+            if (is_object($when)) {
+                $when = new UtcDate((float) $when->format('U.u'));
             } else {
                 $when = new UtcDate($when);
             }
