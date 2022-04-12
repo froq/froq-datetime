@@ -59,7 +59,7 @@ final class Util extends \StaticClass
 
             // Week & more.
             case ($diff->days > 7):
-                return $formatterExec($format ?? ($showTime ? Date::FORMAT_AGO : Date::FORMAT_AGO_SHORT));
+                return $formatterExec($format ?? ($showTime ? Format::AGO : Format::AGO_SHORT));
 
             // Hours, minutes, now.
             default:
@@ -94,8 +94,8 @@ final class Util extends \StaticClass
         is_object($when1) || $when1 = new Date($when1);
         is_object($when2) || $when2 = new Date($when2);
 
-        $date1 = new DateTime($when1->format(Date::FORMAT_ISO_MS));
-        $date2 = new DateTime($when2->format(Date::FORMAT_ISO_MS));
+        $date1 = new DateTime($when1->format(Format::ISO_MS));
+        $date2 = new DateTime($when2->format(Format::ISO_MS));
 
         $diff = $date1->diff($date2);
 

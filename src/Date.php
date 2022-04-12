@@ -25,38 +25,6 @@ class Date implements Arrayable, Stringable, \JsonSerializable
 {
     use FactoryTrait;
 
-    /**
-     * Intervals.
-     * @const int
-     */
-    public final const ONE_MINUTE = 60,
-                       ONE_HOUR   = 3600,
-                       ONE_DAY    = 86400,
-                       ONE_WEEK   = 604800, // 86400 * 7
-                       ONE_MONTH  = 2592000, // 86400 * 30
-                       ONE_YEAR   = 31536000; // 86400 * 365
-
-    /**
-     * Formats.
-     * @const string
-     */
-    public final const FORMAT              = 'Y-m-d H:i:s',           // @default
-                       FORMAT_TZ           = 'Y-m-d H:i:s P',
-                       FORMAT_MS           = 'Y-m-d H:i:s.u',
-                       FORMAT_TZ_MS        = 'Y-m-d H:i:s.u P',
-                       FORMAT_LOCALE       = '%d %B %Y, %R',
-                       FORMAT_LOCALE_SHORT = '%d %B %Y',
-                       FORMAT_AGO          = '%d %B %Y, %R',
-                       FORMAT_AGO_SHORT    = '%d %B %Y',
-                       FORMAT_HTTP         = 'D, d M Y H:i:s \G\M\T', // @rfc7231
-                       FORMAT_HTTP_COOKIE  = self::FORMAT_HTTP,       // @rfc6265
-                       FORMAT_ISO          = 'Y-m-d\TH:i:sP',
-                       FORMAT_ISO_MS       = 'Y-m-d\TH:i:s.uP',
-                       FORMAT_ISO_UTC      = 'Y-m-d\TH:i:s\Z',
-                       FORMAT_ISO_UTC_MS   = 'Y-m-d\TH:i:s.u\Z',
-                       FORMAT_SQL          = self::FORMAT,            // @alias
-                       FORMAT_SQL_MS       = self::FORMAT_MS;         // @alias
-
     /** @var DateTime */
     protected DateTime $dateTime;
 
@@ -64,13 +32,13 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     protected DateTimeZone $dateTimeZone;
 
     /** @var string */
-    protected string $format = self::FORMAT;
+    protected string $format = 'Y-m-d H:i:s.u P';
 
     /** @var string */
     protected string $locale;
 
     /** @var string */
-    protected string $localeFormat = self::FORMAT_LOCALE;
+    protected string $localeFormat = '%d %B %Y, %R';
 
     /**
      * Constructor.
@@ -314,7 +282,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
         $currentTimezone ??= date_default_timezone_get();
 
         [$timezone, $timestamp, $format] = [$this->getTimezone(), $this->getTimestamp(),
-            $format ?? $this->getLocaleFormat()];
+            $format ?? $this->localeFormat];
 
         // Not needed for same stuff.
         $locale   = ($locale && $locale !== $currentLocale) ? $locale : null;
@@ -359,14 +327,19 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Alias for format().
-     *
-     * @param  string|null $format
-     * @return string
+     * @alias format()
      */
-    public final function toString(string $format = null): string
+    public final function toString(...$args): string
     {
-        return $this->format($format);
+        return $this->format(...$args);
+    }
+
+    /**
+     * @alias formatLocale()
+     */
+    public final function toLocaleString(...$args): string
+    {
+        return $this->formatLocale(...$args);
     }
 
     /**
@@ -380,7 +353,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
         $date = ($this instanceof UtcDate) ? $this
               : new UtcDate($this->getTimestamp(true));
 
-        return $date->format($format ?? self::FORMAT_ISO_UTC_MS);
+        return $date->format($format ?? Format::ISO_UTC_MS);
     }
 
     /**
@@ -393,19 +366,8 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     public final function toIsoString(): string
     {
         return ($this->offset() <> 0) // UTC check.
-             ? $this->format(self::FORMAT_ISO_MS)
-             : $this->format(self::FORMAT_ISO_UTC_MS);
-    }
-
-    /**
-     * Get date as local date string.
-     *
-     * @param  string|null $format
-     * @return string
-     */
-    public final function toLocaleString(string $format = null): string
-    {
-        return $this->formatLocale($format);
+             ? $this->format(Format::ISO_MS)
+             : $this->format(Format::ISO_UTC_MS);
     }
 
     /**
@@ -415,7 +377,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public final function toHttpString(): string
     {
-        return $this->format(self::FORMAT_HTTP);
+        return $this->format(Format::HTTP);
     }
 
     /**
@@ -425,7 +387,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public final function toHttpCookieString(): string
     {
-        return $this->format(self::FORMAT_HTTP_COOKIE);
+        return $this->format(Format::HTTP_COOKIE);
     }
 
     /**

@@ -152,7 +152,7 @@ class Formatter
 
         if (!$when instanceof Date) {
             if ($when instanceof DateTime) {
-                $when = new Date($when->format(Date::FORMAT_ISO_MS));
+                $when = new Date($when->format(Format::ISO_MS));
             } else {
                 $when = new Date($when);
             }
@@ -190,7 +190,7 @@ class Formatter
     {
         if (!$when instanceof UtcDate) {
             if ($when instanceof DateTime) {
-                $when = new UtcDate($when->format(Date::FORMAT_ISO_MS));
+                $when = new UtcDate($when->format(Format::ISO_MS));
             } else {
                 $when = new UtcDate($when);
             }
