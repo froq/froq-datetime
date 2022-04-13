@@ -11,12 +11,12 @@ namespace froq\date;
  * Just for only syntactic sugar delight.
  *
  * @package froq\date
- * @object  froq\date\Unixtime
+ * @object  froq\date\UnixTime
  * @author  Kerem Güneş
  * @since   4.0, 5.0
  * @static
  */
-class Unixtime
+class UnixTime
 {
     /**
      * Now.
