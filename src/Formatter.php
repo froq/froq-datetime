@@ -109,7 +109,7 @@ class Formatter
      */
     public function setLocale(string $locale): self
     {
-        // A non-charset given locales UTF-8 charset.
+        // Set charset to UTF-8 if none charset.
         if (!str_contains($locale, '.')) {
             $locale = $locale . '.UTF-8';
         }
