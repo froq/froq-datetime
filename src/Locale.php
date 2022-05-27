@@ -22,9 +22,12 @@ class Locale
 
     /**
      * Get LC_TIME value or default.
+     *
+     * @param  string $default
+     * @return string
      */
-    public static final function default(): string
+    public static final function default(string $default = self::DEFAULT): string
     {
-        return getlocale(LC_TIME, default: self::DEFAULT);
+        return getlocale(LC_TIME, default: $default);
     }
 }
