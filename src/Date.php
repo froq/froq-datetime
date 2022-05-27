@@ -164,7 +164,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function getTimezone(): string
     {
-        return $this->dateTime->getTimezone()->getName();
+        return $this->dateTimeZone->getName();
     }
 
     /**
