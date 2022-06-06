@@ -13,12 +13,12 @@ use DateTime;
  * Date/time utilities.
  *
  * @package froq\date
- * @object  froq\date\Util
+ * @object  froq\date\DateUtil
  * @author  Kerem Güneş
- * @since   4.0
+ * @since   4.0, 6.0
  * @static
  */
-final class Util extends \StaticClass
+final class DateUtil extends \StaticClass
 {
     /**
      * Get a string representation from given date/time input, optionanlly with given format,
