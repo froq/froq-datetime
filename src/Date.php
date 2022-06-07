@@ -279,6 +279,35 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
+     * Modify this date by given content.
+     *
+     * @param  string $content
+     * @return self
+     * @throws froq\date\DateException
+     * @since  6.0
+     */
+    public function modify(string $content): self
+    {
+        $this->dateTime->modify($content) || throw new DateException(
+            $this->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Compute diff of this & that dates.
+     *
+     * @param  string|int|float|Date|DateTime $that
+     * @return froq\date\Diff
+     * @since  6.0
+     */
+    public function diff(string|int|float|Date|DateTime $that): Diff
+    {
+        return DateUtil::diff($this, $that);
+    }
+
+    /**
      * Alias for getTimestamp().
      *
      * @return int
@@ -368,44 +397,6 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     public static function now(string $format = null): int|string
     {
         $now = new static();
-
-        return !$format ? $now->toInt() : $now->toString($format);
-    }
-
-    /**
-     * Now plus, to modify date by given content.
-     *
-     * @param  string      $content
-     * @param  string|null $format
-     * @return int|string
-     * @throws froq\date\DateException
-     */
-    public static function nowPlus(string $content, string $format = null): int|string
-    {
-        $now = new static();
-
-        $now->dateTime->modify($content) || throw new DateException(
-            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date'
-        );
-
-        return !$format ? $now->toInt() : $now->toString($format);
-    }
-
-    /**
-     * Now minus, to modify date by given content.
-     *
-     * @param  string      $content
-     * @param  string|null $format
-     * @return int|string
-     * @throws froq\date\DateException
-     */
-    public static function nowMinus(string $content, string $format = null): int|string
-    {
-        $now = new static();
-
-        $now->dateTime->modify($content) || throw new DateException(
-            $now->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date'
-        );
 
         return !$format ? $now->toInt() : $now->toString($format);
     }
