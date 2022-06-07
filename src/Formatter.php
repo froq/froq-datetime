@@ -149,7 +149,7 @@ class Formatter
 
         if (!$when instanceof Date) {
             if (is_object($when)) {
-                $when = new Date((float) $when->format('U.u'), $when->getDateTimeZone()->getName());
+                $when = new Date((float) $when->format('U.u'), $when->getTimeZone()->getName());
             } else {
                 $when = new Date($when);
             }
