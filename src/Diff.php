@@ -29,7 +29,7 @@ final class Diff
         public readonly int $hour        = 0,
         public readonly int $minute      = 0,
         public readonly int $second      = 0,
-        public readonly int $millisecond = 0,
+        public readonly int $microsecond = 0,
     )
     {}
 }

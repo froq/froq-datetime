@@ -104,7 +104,7 @@ final class DateUtil extends \StaticClass
         return new Diff(
             year: (int) $diff->y, month: (int) $diff->m, day: (int) $diff->d,
             days: (int) $diff->days, hour: (int) $diff->h, minute: (int) $diff->i,
-            second: (int) $diff->s, millisecond: (int) substr((string) $diff->f, 2),
+            second: (int) $diff->s, microsecond: (int) substr((string) $diff->f, 2),
         );
     }
 }

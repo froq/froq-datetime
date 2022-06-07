@@ -288,7 +288,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function modify(string $content): self
     {
-        $this->dateTime->modify($content) || throw new DateException(
+        @ $this->dateTime->modify($content) || throw new DateException(
             $this->dateTime->getLastErrors()['errors'][0] ?? 'Failed to modify date'
         );
 
@@ -318,7 +318,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Alias for getTimestamp() with milliseconds.
+     * Alias for getTimestamp() with microseconds.
      *
      * @return float
      */
