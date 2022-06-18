@@ -80,10 +80,10 @@ final class DateUtil extends \StaticClass
     /**
      * Get a diff/string representation from given date(s)/time(s) calculating their differences.
      *
-     * @param  string|int|float|Date|DateTime $when1
-     * @param  string|int|float|Date|DateTime $when2 @default=now
-     * @param  string|null                    $format
-     * @return string|Diff
+     * @param  string|int|float|froq\date\Date|DateTime $when1
+     * @param  string|int|float|froq\date\Date|DateTime $when2 @default=now
+     * @param  string|null                              $format
+     * @return string|froq\date\Diff
      */
     public static function diff(string|int|float|Date|DateTime $when1, string|int|float|Date|DateTime $when2 = '',
         string $format = null): string|Diff
