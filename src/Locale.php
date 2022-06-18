@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\date;
 
 /**
- * A class for locale time stuff.
+ * A class to use as time locale.
  *
  * @package froq\date
  * @object  froq\date\Locale
