@@ -18,16 +18,16 @@ namespace froq\date;
 class Locale
 {
     /** @const int */
-    public final const DEFAULT = 'en_US.UTF-8';
+    public const DEFAULT = 'en_US.UTF-8';
 
     /**
      * Get LC_TIME value or default.
      *
-     * @param  string $default
+     * @param  string|null $default
      * @return string
      */
-    public static final function default(string $default = self::DEFAULT): string
+    public static function default(string $default = null): string
     {
-        return getlocale(LC_TIME, default: $default);
+        return getlocale(LC_TIME, default: $default ?? static::DEFAULT);
     }
 }

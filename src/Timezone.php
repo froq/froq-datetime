@@ -23,7 +23,7 @@ class Timezone
     use FactoryTrait;
 
     /** @const string */
-    public final const DEFAULT = 'UTC';
+    public const DEFAULT = 'UTC';
 
     /** @var array */
     protected array $info;
@@ -254,13 +254,14 @@ class Timezone
      *
      * @param  string|null $id
      * @return string
+     * @throws froq\date\TimezoneException
      */
-    public static final function default(string $id = null): string
+    public static function default(string $id = null): string
     {
-        if ($id !== null) {
-            date_default_timezone_set($id);
+        if ($id !== null && !@date_default_timezone_set($id)) {
+            throw new TimezoneException(new \LastError());
         }
 
-        return date_default_timezone_get() ?: self::DEFAULT;
+        return date_default_timezone_get() ?: static::DEFAULT;
     }
 }
