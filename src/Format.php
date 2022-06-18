@@ -41,6 +41,14 @@ class Format
     ) {}
 
     /**
+     * @magic
+     */
+    public function __toString()
+    {
+        return $this->pattern;
+    }
+
+    /**
      * Set pattern.
      *
      * @param  string $pattern

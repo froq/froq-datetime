@@ -34,6 +34,23 @@ class Locale
     }
 
     /**
+     * @magic
+     */
+    public function __toString()
+    {
+        $ret = $this->info->language;
+
+        if ($this->info->country) {
+            $ret .= '_' . $this->info->country;
+        }
+        if ($this->info->encoding) {
+            $ret .= '.' . $this->info->encoding;
+        }
+
+        return $ret;
+    }
+
+    /**
      * Get language.
      *
      * @return string
