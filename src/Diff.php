@@ -13,7 +13,7 @@ namespace froq\date;
  * @package froq\date
  * @object  froq\date\Diff
  * @author  Kerem Güneş
- * @since   5.2
+ * @since   5.2, 6.0
  * @internal
  */
 final class Diff
