@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace froq\date;
 
+use DateTime;
+
 /**
  * Just for only syntactic sugar delight.
  *
@@ -31,12 +33,12 @@ class UnixTime
     /**
      * Convert given date to unixtime.
      *
-     * @param  string $when
+     * @param  string|Date|DateTime $when
      * @return int
      */
-    public static function from(string $when): int
+    public static function from(string|Date|DateTime $when): int
     {
-        return strtotime($when);
+        return is_string($when) ? strtotime($when) : $when->getTimestamp();
     }
 }
 
