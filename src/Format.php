@@ -45,7 +45,7 @@ class Format
      */
     public function __toString()
     {
-        return $this->pattern;
+        return $this->getPattern();
     }
 
     /**

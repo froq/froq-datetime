@@ -38,13 +38,13 @@ class Locale
      */
     public function __toString()
     {
-        $ret = $this->info->language;
+        $ret = $this->getLanguage();
 
-        if ($this->info->country) {
-            $ret .= '_' . $this->info->country;
+        if ($country = $this->getCountry()) {
+            $ret .= '_' . $country;
         }
-        if ($this->info->encoding) {
-            $ret .= '.' . $this->info->encoding;
+        if ($encoding = $this->getEncoding()) {
+            $ret .= '.' . $encoding;
         }
 
         return $ret;
@@ -92,10 +92,10 @@ class Locale
     {
         $info = $language;
 
-        if ($country != '') {
+        if ($country) {
             $info .= '_' . $country;
         }
-        if ($encoding != '') {
+        if ($encoding) {
             $info .= '.' . $encoding;
         }
 
