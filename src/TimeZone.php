@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace froq\date;
 
-use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone;
 
 /**
@@ -20,8 +19,6 @@ use DateTime, DateTimeZone;
  */
 class TimeZone
 {
-    use FactoryTrait;
-
     /** @const string */
     public const DEFAULT = 'UTC';
 
