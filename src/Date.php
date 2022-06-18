@@ -328,6 +328,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
+     * @inheritDoc froq\common\interface\Stringable
      * @alias format()
      */
     public function toString(...$args): string
