@@ -25,8 +25,8 @@ class Timezone
     /** @const string */
     public const DEFAULT = 'UTC';
 
-    /** @var array */
-    protected array $info;
+    /** @var froq\date\TimeZoneInfo */
+    public readonly TimeZoneInfo $info;
 
     /**
      * Constructor.
@@ -47,7 +47,7 @@ class Timezone
      */
     public function getId(): string
     {
-        return $this->info['id'];
+        return $this->info->id;
     }
 
     /**
@@ -57,7 +57,7 @@ class Timezone
      */
     public function getName(): string
     {
-        return $this->info['name'];
+        return $this->info->name;
     }
 
     /**
@@ -67,7 +67,7 @@ class Timezone
      */
     public function getOffset(): int
     {
-        return $this->info['offset'];
+        return $this->info->offset;
     }
 
     /**
@@ -77,23 +77,21 @@ class Timezone
      */
     public function getOffsetCode(): string
     {
-        return $this->info['offsetCode'];
+        return $this->info->offsetCode;
     }
 
     /**
-     * Get info data or only one field with given key.
+     * Get transition.
      *
-     * @param  string|null $key
-     * @return mixed|null
-     * @since  4.5
+     * @return array|null
      */
-    public function info(string $key = null): mixed
+    public function getTransition(): array|null
     {
-        return !$key ? $this->info : $this->info[$key] ?? null;
+        return $this->info->transition;
     }
 
     /**
-     * Create a DateTimeZone instance or throw a `TimezoneException` if an invalid ID given.
+     * Create a DateTimeZone instance or throw a `TimezoneException` if given ID is invalid.
      *
      * @param  string $id
      * @return DateTimeZone
@@ -119,10 +117,10 @@ class Timezone
      *
      * @param  string $id
      * @param  bool   $transition
-     * @return array
+     * @return froq\date\TimeZoneInfo
      * @since  4.5
      */
-    public static function makeInfo(string $id, bool $transition = false): array
+    public static function makeInfo(string $id, bool $transition = false): TimeZoneInfo
     {
         $zone = self::make($id);
         $date = new DateTime('', $zone);
@@ -131,8 +129,9 @@ class Timezone
         $name = str_replace(['/', '_'], [' / ', ' '], $id);
 
         $info = [
-            'id'     => $id,                'name'       => $name,
-            'offset' => $date->getOffset(), 'offsetCode' => $date->format('P'),
+            'id'         => $id,                'name'       => $name,
+            'offset'     => $date->getOffset(), 'offsetCode' => $date->format('P'),
+            'transition' => null,
         ];
 
         if ($transition) {
@@ -145,87 +144,7 @@ class Timezone
             ];
         }
 
-        return $info;
-    }
-
-    /**
-     * List identifiers.
-     *
-     * @param  string|int|null $group
-     * @param  string|null     $country
-     * @param  bool            $transition
-     * @return array
-     * @throws froq\date\TimezoneException
-     */
-    public static function list(string|int $group = null, string $country = null, bool $transition = false): array
-    {
-        if ($group == null && $country != null) {
-            $group = DateTimeZone::PER_COUNTRY;
-        }
-
-        try {
-            if ($group != null) {
-                // Eg: tr => TR (for typos).
-                $country && $country = strtoupper($country);
-
-                if (is_string($group)) {
-                    $constant = 'DateTimeZone::'. strtoupper($group);
-                    defined($constant) || throw new TimezoneException(
-                        'Invalid group %s, use a valid DateTimeZone constant name', $group
-                    );
-
-                    $ids = DateTimeZone::listIdentifiers(constant($constant), $country);
-                } else {
-                    $ids = DateTimeZone::listIdentifiers($group, $country);
-                }
-            } else {
-                $ids = DateTimeZone::listIdentifiers();
-            }
-        } catch (\Throwable $e) {
-            throw new TimezoneException($e);
-        }
-
-        $ret = [];
-
-        // Always first.
-        if ($group == null) {
-            $ret[] = self::makeInfo('UTC', $transition);
-        }
-
-        foreach ($ids as $id) {
-            // Already set first.
-            if ($group == null && $id == 'UTC') {
-                continue;
-            }
-
-            $ret[] = self::makeInfo($id, $transition);
-        }
-
-        return $ret;
-    }
-
-    /**
-     * List identifiers by given group.
-     *
-     * @param  string|int $group
-     * @param  bool       $transition
-     * @return array
-     */
-    public static function listByGroup(string|int $group, bool $transition = false): array
-    {
-        return self::list($group, null, $transition);
-    }
-
-    /**
-     * List identifiers by given country.
-     *
-     * @param  string $country
-     * @param  bool   $transition
-     * @return array
-     */
-    public static function listByCountry(string $country, bool $transition = false): array
-    {
-        return self::list(null, $country, $transition);
+        return new TimeZoneInfo(...$info);
     }
 
     /**
