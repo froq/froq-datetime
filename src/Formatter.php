@@ -37,11 +37,11 @@ class Formatter
     /**
      * Constructor.
      *
-     * @param array|null  $intl
-     * @param string|null $format
-     * @param string|null $locale
+     * @param array|null                   $intl
+     * @param string|froq\date\Format|null $format
+     * @param string|froq\date\Locale|null $locale
      */
-    public function __construct(array $intl = null, string $format = null, string $locale = null)
+    public function __construct(array $intl = null, string|Format $format = null, string|Locale $locale = null)
     {
         $this->setIntl($intl ?: []);
         $this->setFormat($format ?: '');
@@ -81,12 +81,12 @@ class Formatter
     /**
      * Set format.
      *
-     * @param  string $format
+     * @param  string|froq\date\Format $format
      * @return self
      */
-    public function setFormat(string $format): self
+    public function setFormat(string|Format $format): self
     {
-        $this->format = $format;
+        $this->format = (string) $format;
 
         return $this;
     }
@@ -104,11 +104,13 @@ class Formatter
     /**
      * Set locale.
      *
-     * @param  string $locale
+     * @param  string|froq\date\Locale $locale
      * @return self
      */
-    public function setLocale(string $locale): self
+    public function setLocale(string|Locale $locale): self
     {
+        $locale = (string) $locale;
+
         // Set charset to UTF-8 if none charset.
         if (!str_contains($locale, '.')) {
             $locale = $locale . '.UTF-8';
@@ -132,19 +134,15 @@ class Formatter
     /**
      * Format.
      *
-     * @param  string|int|float|Date|DateTime $when
-     * @param  string|Format|null             $format
+     * @param  string|int|float|froq\date\Date|DateTime $when
+     * @param  string|froq\date\Format|null             $format
      * @return string
      * @throws froq\date\FormatterException
      * @thanks https://gist.github.com/bohwaz/42fc223031e2b2dd2585aab159a20f30
      */
     public function format(string|int|float|Date|DateTime $when, string|Format $format = null): string
     {
-        if ($format && $format instanceof Format) {
-            $format = $format->getPattern();
-        }
-
-        $format = $format ?: $this->format ?:
+        $format = (string) $format ?: $this->format ?:
             throw new FormatterException('No format yet, call setFormat() or pass $format argument');
 
         if (!$when instanceof Date) {
@@ -178,8 +176,8 @@ class Formatter
     /**
      * Format UTC.
      *
-     * @param  string|int|float|Date|DateTime $when
-     * @param  string|Format|null             $format
+     * @param  string|int|float|froq\date\Date|DateTime $when
+     * @param  string|froq\date\Format|null             $format
      * @return string
      * @causes froq\date\FormatterException
      */
