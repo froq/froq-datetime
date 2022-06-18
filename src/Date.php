@@ -308,6 +308,18 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
+     * Create a time zone info on demand.
+     *
+     * @param  bool $transition
+     * @return froq\date\TimeZone
+     * @since  6.0
+     */
+    public function zone(bool $transition = false): TimeZone
+    {
+        return new TimeZone($this->getTimezone(), $transition);
+    }
+
+    /**
      * Alias for getTimestamp().
      *
      * @return int
