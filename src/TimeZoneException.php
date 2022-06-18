@@ -9,9 +9,9 @@ namespace froq\date;
 
 /**
  * @package froq\date
- * @object  froq\date\TimezoneException
+ * @object  froq\date\TimeZoneException
  * @author  Kerem Güneş
  * @since   4.5
  */
-class TimezoneException extends DateException
+class TimeZoneException extends DateException
 {}

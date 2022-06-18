@@ -11,14 +11,14 @@ use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone;
 
 /**
- * An extended timezone class with some utility methods.
+ * Time zone class with some utility methods.
  *
  * @package froq\date
- * @object  froq\date\Timezone
+ * @object  froq\date\TimeZone
  * @author  Kerem Güneş
  * @since   4.0
  */
-class Timezone
+class TimeZone
 {
     use FactoryTrait;
 
@@ -91,24 +91,24 @@ class Timezone
     }
 
     /**
-     * Create a DateTimeZone instance or throw a `TimezoneException` if given ID is invalid.
+     * Create a DateTimeZone instance or throw a `TimeZoneException` if given ID is invalid.
      *
      * @param  string $id
      * @return DateTimeZone
-     * @throws froq\date\TimezoneException
+     * @throws froq\date\TimeZoneException
      * @since  4.5
      */
     public static function make(string $id): DateTimeZone
     {
         // Validate id & throw a proper message (eg: date_default_timezone_set() notices only).
-        self::isValidId($id) || throw new TimezoneException(
-            'Invalid timezone id `%s`, use UTC, Xxx/Xxx, ±NN or ±NN:NN convention', $id
+        self::isValidId($id) || throw new TimeZoneException(
+            'Invalid time zone id `%s`, use UTC, Xxx/Xxx, ±NN or ±NN:NN convention', $id
         );
 
         try {
             return new DateTimeZone($id);
         } catch (\Throwable $e) {
-            throw new TimezoneException($e);
+            throw new TimeZoneException($e);
         }
     }
 
@@ -169,16 +169,16 @@ class Timezone
     }
 
     /**
-     * Set/get default timezone.
+     * Set/get default time zone.
      *
      * @param  string|null $id
      * @return string
-     * @throws froq\date\TimezoneException
+     * @throws froq\date\TimeZoneException
      */
     public static function default(string $id = null): string
     {
         if ($id !== null && !@date_default_timezone_set($id)) {
-            throw new TimezoneException(new \LastError());
+            throw new TimeZoneException(new \LastError());
         }
 
         return date_default_timezone_get() ?: static::DEFAULT;

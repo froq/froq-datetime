@@ -12,7 +12,7 @@ use froq\common\trait\FactoryTrait;
 use DateTime, DateTimeZone;
 
 /**
- * An extended date class with some utility methods.
+ * Date class with some utility methods.
  *
  * @package froq\date
  * @object  froq\date\Date
@@ -44,15 +44,15 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      * @param  string|int|float|null $when
      * @param  string|null           $where
      * @param  string|null           $locale
-     * @throws froq\date\{TimezoneException,DateException}
+     * @throws froq\date\{TimeZoneException,DateException}
      */
     public function __construct(string|int|float $when = null, string $where = null, string $locale = null)
     {
         $when  ??= '';
-        $where ??= Timezone::default();
+        $where ??= TimeZone::default();
 
         try {
-            $dateTimeZone = Timezone::make($where);
+            $dateTimeZone = TimeZone::make($where);
             switch (get_type($when)) {
                 case 'string': // Eg: 2012-09-12 23:42:53
                     $dateTime = new DateTime($when, $dateTimeZone);
@@ -66,14 +66,14 @@ class Date implements Arrayable, Stringable, \JsonSerializable
                     $dateTime->setTimezone($dateTimeZone);
                     break;
             }
-        } catch (TimezoneException $e) {
+        } catch (TimeZoneException $e) {
             throw $e;
         } catch (\Throwable $e) {
             throw new DateException($e);
         }
 
         // @cancel: Let user pass proper args.
-        // Note: Since DateTime accepts a timezone as first argument ($when), we should make
+        // Note: Since DateTime accepts a time zone as first argument ($when), we should make
         // DateTimeZone's same here. Otherwise Date.DateTime & Date.DateTimeZone objects will
         // have different timezones.
         // $zone1 = $dateTime->getTimezone()->getName();
@@ -151,7 +151,7 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      */
     public function setTimezone(string $where): self
     {
-        $this->dateTimeZone = Timezone::make($where);
+        $this->dateTimeZone = TimeZone::make($where);
         $this->dateTime->setTimezone($this->dateTimeZone);
 
         return $this;

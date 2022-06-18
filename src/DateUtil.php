@@ -78,7 +78,7 @@ final class DateUtil extends \StaticClass
     }
 
     /**
-     * Get an diff/string representation from given date(s)/time(s) calculating their differences.
+     * Get a diff/string representation from given date(s)/time(s) calculating their differences.
      *
      * @param  string|int|float|Date|DateTime $when1
      * @param  string|int|float|Date|DateTime $when2 @default=now
