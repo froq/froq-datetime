@@ -113,7 +113,7 @@ class TimeZoneList extends \ItemList
      * @param  bool       $transition
      * @return froq\date\TimeZoneInfo[]
      */
-    public static function listByGroup(string|int $group, bool $transition = false): array
+    public static function listGroup(string|int $group, bool $transition = false): array
     {
         return self::list($group, null, $transition);
     }
@@ -125,7 +125,7 @@ class TimeZoneList extends \ItemList
      * @param  bool   $transition
      * @return froq\date\TimeZoneInfo[]
      */
-    public static function listByCountry(string $country, bool $transition = false): array
+    public static function listCountry(string $country, bool $transition = false): array
     {
         return self::list(null, $country, $transition);
     }
