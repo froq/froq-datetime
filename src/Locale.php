@@ -26,11 +26,11 @@ class Locale
     /**
      * Constructor.
      *
-     * @param string $info
+     * @param string $locale
      */
-    public function __construct(string $info)
+    public function __construct(string $locale)
     {
-        $this->info = self::makeInfo($info);
+        $this->info = self::makeInfo($locale);
     }
 
     /**
@@ -46,9 +46,9 @@ class Locale
     /**
      * Get country.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCountry(): string
+    public function getCountry(): string|null
     {
         return $this->info->country;
     }
@@ -67,14 +67,17 @@ class Locale
      * Make a locale using language, country and encoding params.
      *
      * @param  string      $language
-     * @param  string      $country
+     * @param  string|null $country
      * @param  string|null $encoding
      * @return froq\date\Locale
      */
-    public static function make(string $language, string $country, string $encoding = null): Locale
+    public static function make(string $language, string $country = null, string $encoding = null): Locale
     {
-        $info = $language . '_' . $country;
+        $info = $language;
 
+        if ($country != '') {
+            $info .= '_' . $country;
+        }
         if ($encoding != '') {
             $info .= '.' . $encoding;
         }
@@ -85,12 +88,20 @@ class Locale
     /**
      * Make a locale info using parsed language, country and encoding parts.
      *
-     * @param  string $info
+     * @param  string $locale
      * @return froq\date\LocaleInfo
      */
-    public static function makeInfo(string $info): LocaleInfo
+    public static function makeInfo(string $locale): LocaleInfo
     {
-        $info = self::parse($info);
+        if (trim($locale) == '') {
+            throw new LocaleException('Empty locale given');
+        }
+
+        $info = self::parse($locale);
+
+        if (empty($info['language'])) {
+            throw new LocaleException('Invalid locale: ' . $locale);
+        }
 
         return new LocaleInfo(...$info);
     }
@@ -103,9 +114,10 @@ class Locale
      */
     public static function parse(string $info): array
     {
-        $ret = ['language' => '', 'country' => '', 'encoding' => null];
+        $ret = ['language' => '', 'country' => null, 'encoding' => null];
 
-        if (preg_match('~([a-z]{2})(?:_([a-z-A-Z]{2}))?(?:\.([a-z-A-Z\d\-]+))?~', $info, $match)) {
+        // Expected format: language[_COUNTRY[.encoding]]
+        if (preg_match('~^([a-z]{2,3})(?:_([A-Z]{2}))?(?:.([a-z-A-Z\d\-]+))?$~', $info, $match)) {
             $ret = array_combine(array_keys($ret), array_pad(array_slice($match, 1), 3, null));
         }
 

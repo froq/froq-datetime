@@ -23,7 +23,7 @@ final class LocaleInfo
      */
     public function __construct(
         public readonly string  $language,
-        public readonly string  $country,
+        public readonly ?string $country  = null,
         public readonly ?string $encoding = null,
     )
     {}
