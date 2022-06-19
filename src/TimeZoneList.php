@@ -58,6 +58,7 @@ class TimeZoneList extends \ItemList
      */
     public static function list(string|int $group = null, string $country = null, bool $transition = false): array
     {
+        // Set group as per-country.
         if ($group == null && $country != null) {
             $group = DateTimeZone::PER_COUNTRY;
         }
