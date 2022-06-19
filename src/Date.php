@@ -413,9 +413,9 @@ class Date implements Arrayable, Stringable, \JsonSerializable
      * @return static
      */
     public static function make(
-        int $year, int $month = 1, int $day = 1,
-        int $hour = 0, int $minute = 0, int $second = 0,
-        int $microsecond = 0, string $where = null, string $locale = null
+        int $year = null, int $month = null, int $day = null,
+        int $hour = null, int $minute = null, int $second = null,
+        int $microsecond = null, string $where = null, string $locale = null
     ): static
     {
         $when = (float) (

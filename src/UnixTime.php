@@ -83,11 +83,16 @@ class UnixTime
      * @return int|null
      */
     public static function make(
-        int $year, int $month = null, int $day = null,
+        int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
     ): int|null
     {
-        $time =@ mktime($hour ?? 0, $minute, $second, $month, $day, $year);
+        $defs = array_map('intval', explode('-', date('Y-m-d-H-i-s')));
+
+        $time =@ mktime(
+            $hour ?? $defs[3], $minute ?? $defs[4], $second ?? $defs[5],
+            $month ?? $defs[1], $day ?? $defs[2], $year ?? $defs[0]
+        );
         return ($time !== false) ? $time : null;
     }
 
