@@ -426,6 +426,37 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
+     * Parse a date.
+     *
+     * @param  string      $date
+     * @param  string|null $format
+     * @return array
+     * @throws froq\date\DateException
+     */
+    public static function parse(string $date, string $format = null): array
+    {
+        $date = trim($date);
+
+        // Parser not catch this, just fill with false returning array.
+        if ($date == '') {
+            throw new DateException('Empty date given');
+        }
+
+        if ($format != '') {
+            $ret = date_parse_from_format($format, $date);
+        } else {
+            $ret = date_parse($date);
+        }
+
+        if (!empty($ret['errors'])) {
+            $errors = array_unique($ret['errors']);
+            throw new DateException('Invalid date: %s [errors: %A]', [$date, $errors]);
+        }
+
+        return $ret;
+    }
+
+    /**
      * Alias for toInt() or toString().
      *
      * @param  string|null $format
