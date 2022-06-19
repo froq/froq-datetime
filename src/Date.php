@@ -415,7 +415,8 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     public static function make(
         int $year, int $month = 1, int $day = 1,
         int $hour = 0, int $minute = 0, int $second = 0, int $microsecond = 0,
-        string $where = null, string $locale = null): static
+        string $where = null, string $locale = null
+    ): static
     {
         $when = (float) (
             UnixTime::make($year, $month, $day, $hour, $minute, $second)
