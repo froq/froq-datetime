@@ -308,12 +308,12 @@ class Formatter
     private function getMonth(Date $date): string
     {
         $key = $date->format('n') - 1;
-        return $this->translate('mons', $key, $date->format('F'));
+        return $this->translate('months', $key, $date->format('F'));
     }
     private function getMonthAbbr(Date $date): string
     {
         $key = $date->format('n') - 1;
-        return mb_substr($this->translate('mons', $key, $date->format('M')), 0, 3);
+        return mb_substr($this->translate('months', $key, $date->format('M')), 0, 3);
     }
 
     /**
