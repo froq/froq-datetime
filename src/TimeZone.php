@@ -38,6 +38,14 @@ class TimeZone
     }
 
     /**
+     * @magic
+     */
+    public function __toString()
+    {
+        return $this->getId();
+    }
+
+    /**
      * Get id.
      *
      * @return string
