@@ -90,12 +90,9 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
-     * Return formatted date representation.
-     *
-     * @return string
      * @magic
      */
-    public function __toString(): string
+    public function __toString()
     {
         return $this->toString();
     }
