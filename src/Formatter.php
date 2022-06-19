@@ -37,11 +37,11 @@ class Formatter
     /**
      * Constructor.
      *
-     * @param array|null                   $intl
+     * @param array|froq\date\Intl|null    $intl
      * @param string|froq\date\Format|null $format
      * @param string|froq\date\Locale|null $locale
      */
-    public function __construct(array $intl = null, string|Format $format = null, string|Locale $locale = null)
+    public function __construct(array|Intl $intl = null, string|Format $format = null, string|Locale $locale = null)
     {
         $this->setIntl($intl ?: []);
         $this->setFormat($format ?: '');
@@ -49,27 +49,27 @@ class Formatter
     }
 
     /**
-     * Set intl map.
+     * Set intl.
      *
-     * @param  array $intl
+     * @param  array|Intl $intl
      * @return self
      */
-    public function setIntl(array $intl): self
+    public function setIntl(array|Intl $intl): self
     {
-        // Swap non-charset given translations with UTF-8 charset.
         foreach ($intl as $locale => $translation) {
+            // Set charset to UTF-8 if none charset.
             if (!str_contains($locale, '.')) {
-                array_swap($intl, $locale, $locale . '.UTF-8');
+                $locale .= '.UTF-8';
             }
-        }
 
-        $this->intl = $intl;
+            $this->intl[$locale] = $translation;
+        }
 
         return $this;
     }
 
     /**
-     * Get intl map.
+     * Get intl.
      *
      * @return array
      */
@@ -113,7 +113,7 @@ class Formatter
 
         // Set charset to UTF-8 if none charset.
         if (!str_contains($locale, '.')) {
-            $locale = $locale . '.UTF-8';
+            $locale .= '.UTF-8';
         }
 
         $this->locale = $locale;
