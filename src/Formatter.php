@@ -56,6 +56,8 @@ class Formatter
      */
     public function setIntl(array|Intl $intl): self
     {
+        $this->intl = []; // Clean up / also set.
+
         foreach ($intl as $locale => $translation) {
             // Set charset to UTF-8 if none charset.
             if (!str_contains($locale, '.')) {
