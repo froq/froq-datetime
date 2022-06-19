@@ -43,15 +43,15 @@ class Formatter
      */
     public function __construct(array|Intl $intl = null, string|Format $format = null, string|Locale $locale = null)
     {
-        $this->setIntl($intl ?: []);
-        $this->setFormat($format ?: '');
-        $this->setLocale($locale ?: Locale::default());
+        $this->setIntl($intl ?? [])
+             ->setFormat($format ?? '')
+             ->setLocale($locale ?? Locale::default());
     }
 
     /**
      * Set intl.
      *
-     * @param  array|Intl $intl
+     * @param  array|froq\date\Intl $intl
      * @return self
      */
     public function setIntl(array|Intl $intl): self
@@ -60,7 +60,7 @@ class Formatter
 
         foreach ($intl as $locale => $translation) {
             // Set charset to UTF-8 if none charset.
-            if (!str_contains($locale, '.')) {
+            if ($locale && !str_contains($locale, '.')) {
                 $locale .= '.UTF-8';
             }
 
@@ -114,7 +114,7 @@ class Formatter
         $locale = (string) $locale;
 
         // Set charset to UTF-8 if none charset.
-        if (!str_contains($locale, '.')) {
+        if ($locale && !str_contains($locale, '.')) {
             $locale .= '.UTF-8';
         }
 
