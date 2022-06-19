@@ -33,16 +33,15 @@ final class DateUtil extends \StaticClass
     public static function ago(string|int|float $when, string $format = null, array $intl = null,
         bool $showTime = true): string
     {
-        static $date, $dateNow, $formatter;
+        static $date, $dateNow;
 
         $date ??= new DateTime();
         $dateNow ??= new DateTime();
-        $formatter ??= new Formatter();
 
         // Just update/modify timestamp.
         $date->setTimestamp((new Date($when))->getTimestamp());
 
-        $formatter->setIntl($intl ?? []);
+        $formatter = new Formatter($intl);
         $formatterExec = fn($format) => $formatter->format($date, $format);
 
         switch ($diff = $dateNow->diff($date)) {
