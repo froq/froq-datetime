@@ -399,6 +399,33 @@ class Date implements Arrayable, Stringable, \JsonSerializable
     }
 
     /**
+     * Make a date.
+     *
+     * @param  int         $year
+     * @param  int         $month
+     * @param  int         $day
+     * @param  int         $hour
+     * @param  int         $minute
+     * @param  int         $second
+     * @param  int         $microsecond
+     * @param  string|null $where
+     * @param  string|null $locale
+     * @return static
+     */
+    public static function make(
+        int $year, int $month = 1, int $day = 1,
+        int $hour = 0, int $minute = 0, int $second = 0, int $microsecond = 0,
+        string $where = null, string $locale = null): static
+    {
+        $when = (float) (
+            UnixTime::make($year, $month, $day, $hour, $minute, $second)
+            . '.' . $microsecond
+        );
+
+        return new static($when, $where, $locale);
+    }
+
+    /**
      * Alias for toInt() or toString().
      *
      * @param  string|null $format
