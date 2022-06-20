@@ -246,13 +246,44 @@ class Dater
     }
 
     /**
+     * Get full date.
+     *
+     * @return string
+     */
+    public function getFullDate(): string
+    {
+        return $this->format('Y-m-d H:i:s.u');
+    }
+
+    /**
      * Get time.
      *
      * @return string
      */
     public function getTime(): string
     {
+        return $this->format('H:i');
+    }
+
+    /**
+     * Get full time.
+     *
+     * @return string
+     */
+    public function getFullTime(): string
+    {
         return $this->format('H:i:s.u');
+    }
+
+    /**
+     * Get timestamp.
+     *
+     * @param  bool $float
+     * @return int|float
+     */
+    public function getTimestamp(bool $float = false): int|float
+    {
+        return !$float ? (int) $this->format('U') : (float) $this->format('U.u');
     }
 
     /**
