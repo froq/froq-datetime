@@ -8,14 +8,14 @@ declare(strict_types=1);
 namespace froq\date;
 
 /**
- * A factory class for building Date instances.
+ * A date class for building Date instances in a stricter control.
  *
  * @package froq\date
  * @object  froq\date\Dater
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Dater
+class Dater implements \Stringable
 {
     /**
      * Constructor.
@@ -36,6 +36,14 @@ class Dater
         private ?int $microsecond = null, private ?string $timezone = null, private ?string $locale = null
     )
     {}
+
+    /**
+     * @magic
+     */
+    public function __toString()
+    {
+        return $this->format('Y-m-d H:i:s.u P');
+    }
 
     /**
      * Set year.
@@ -236,6 +244,27 @@ class Dater
     }
 
     /**
+     * Set date.
+     *
+     * @param  string $date
+     * @return self
+     * @throws froq\date\DateException
+     */
+    public function setDate(string $date): self
+    {
+        // Eg: 1990-01-09.
+        if (preg_match('~^(\d{2,4})-(\d{1,2})-(\d{1,2})$~', $date, $match)) {
+            return $this->setYear((int) $match[1])
+                        ->setMonth((int) $match[2])
+                        ->setDay((int) $match[3])
+                        // Must be updated calling setTime().
+                        ->setTime('00:00:00.000000');
+        }
+
+        throw new DateException('Invalid date: ' . $date);
+    }
+
+    /**
      * Get date.
      *
      * @return string
@@ -253,6 +282,26 @@ class Dater
     public function getFullDate(): string
     {
         return $this->format('Y-m-d H:i:s.u');
+    }
+
+    /**
+     * Set time.
+     *
+     * @param  string $time
+     * @return self
+     * @throws froq\date\DateException
+     */
+    public function setTime(string $time): self
+    {
+        // Eg: 23:30:11.506001, 23:30:11, 23:30.
+        if (preg_match('~^(\d{1,2}):(\d{1,2})(?:\:(\d{1,2})(?:\.(\d{3,}))?)?$~', $time, $match)) {
+            return $this->setHour((int) $match[1])
+                        ->setMinute((int) $match[2])
+                        ->setSecond((int) ($match[3] ?? 0))
+                        ->setMicrosecond((int) ($match[4] ?? 0));
+        }
+
+        throw new DateException('Invalid time: ' . $time);
     }
 
     /**
