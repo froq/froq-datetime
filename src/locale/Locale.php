@@ -11,7 +11,7 @@ namespace froq\datetime\locale;
  * A class to use as time locale.
  *
  * @package froq\datetime\locale
- * @class   froq\datetime\locale\Locale
+ * @object  froq\datetime\locale\Locale
  * @author  Kerem Güneş
  * @since   6.0
  */

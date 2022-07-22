@@ -14,7 +14,7 @@ use froq\common\interface\Stringable;
  * An extended DateTimeZone class.
  *
  * @package froq\datetime
- * @class   froq\datetime\DateTimeZone
+ * @object  froq\datetime\DateTimeZone
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */
