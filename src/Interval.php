@@ -158,7 +158,9 @@ class Interval extends \DateInterval implements Arrayable
 
         // Must set manually.
         $that->f = (float) $fraction;
-        $that->days = (int) $days;
+        if ($days !== null) {
+            $that->days = (int) $days;
+        }
 
         return $that;
     }
