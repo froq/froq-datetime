@@ -1,13 +1,13 @@
 {
-    "name": "froq/froq-date",
-    "homepage": "http://github.com/froq/froq-date",
-    "description": "Froq! Date.",
-    "keywords": ["froq", "date"],
+    "name": "froq/froq-datetime",
+    "homepage": "http://github.com/froq/froq-datetime",
+    "description": "Froq! Date/Time.",
+    "keywords": ["froq", "date", "time", "datetime"],
     "license": "Apache-2.0",
     "authors": [{"name": "Kerem Güneş"}],
     "require": {
-        "php": "^8.0",
-        "froq/froq-common": "^5.0"
+        "php": "^8.1",
+        "froq/froq-common": "^6.0"
     },
     "autoload": {
         "classmap": ["src/"]
