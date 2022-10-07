@@ -52,7 +52,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
         try {
             // Normal construction.
             if (is_string($when)) {
-                parent::__construct($when);
+                parent::__construct($when, $where);
             } else {
                 // Extended construction.
                 $when = match (get_type($when)) {
@@ -62,7 +62,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
                 };
 
                 // With all needed info as format.
-                parent::__construct($when->format('Y-m-d H:i:s.u P'));
+                parent::__construct($when->format('Y-m-d H:i:s.u P'), $where);
             }
 
             // Apply timezone that given or taken from given datetime object.
