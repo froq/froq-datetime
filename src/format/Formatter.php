@@ -122,7 +122,7 @@ class Formatter
     /**
      * Format.
      *
-     * @param  int|float|string|DateTimeInterface  $when
+     * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
      * @throws froq\datetime\format\FormatException
@@ -142,7 +142,7 @@ class Formatter
     /**
      * Format - UTC.
      *
-     * @param  int|float|string|DateTimeInterface  $when
+     * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
      * @throws froq\datetime\format\FormatException
@@ -168,7 +168,7 @@ class Formatter
     /**
      * Format locale.
      *
-     * @param  int|float|string|DateTimeInterface  $when
+     * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
      * @throws froq\datetime\format\FormatException
@@ -201,7 +201,7 @@ class Formatter
     /**
      * Format locale - UTC.
      *
-     * @param  int|float|string|DateTimeInterface  $when
+     * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
      * @causes froq\datetime\format\FormatException
