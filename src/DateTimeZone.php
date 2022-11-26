@@ -111,7 +111,7 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
 
             throw new DateTimeZoneException(
                 'Method %s() is only available if timezone type is %q, this timezone type is %q (%s)',
-                [__function__, 'id', $type, $this->getName()]
+                [__METHOD__, 'id', $type, $this->getName()]
             );
         }
 
