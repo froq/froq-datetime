@@ -27,7 +27,7 @@ class ZoneIdList extends \ItemList
     public function __construct(string|int $group = null, string $country = null)
     {
         $items = ZoneUtil::listIds($group, $country);
-        $items->map(fn($id) => new ZoneId($id));
+        $items->map(fn(string $id): ZoneId => new ZoneId($id));
 
         parent::__construct($items);
     }
