@@ -16,11 +16,7 @@ namespace froq\datetime\zone;
  */
 class Zones
 {
-    /**
-     * Zones.
-     *
-     * @const string
-     */
+    /** Zones. */
     public final const
         // UTC.
         UTC = 'UTC',
