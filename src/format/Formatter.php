@@ -183,8 +183,8 @@ class Formatter
         $this->createMap();
 
         $out = preg_replace_callback('~(?<!%)(%[a-z])~i', function ($match) use ($when) {
-            if ($match[1] == '%n') return "\n";
-            if ($match[1] == '%t') return "\t";
+            if ($match[1] === '%n') return "\n";
+            if ($match[1] === '%t') return "\t";
 
             $replace = $this->map[$match[1]] ?? throw FormatException::forInvalidFormat($match[1]);
 
@@ -253,7 +253,7 @@ class Formatter
         // Get diff from then by now.
         switch ($diff = $then->diff(new \DateTime('', $where))) {
             // Yesterday.
-            case ($diff->days == 1):
+            case ($diff->days === 1):
                 $yesterday = $this->translate('yesterday', '', 'Yesterday');
                 return $showTime ? $yesterday .', '. $formatLocale('%H:%M') : $yesterday;
 
@@ -269,15 +269,15 @@ class Formatter
             default:
                 if ($diff->h >= 1) {
                     return $diff->h .' '. (
-                        $diff->h == 1 ? $this->translate('hour', '', 'hour')
-                                      : $this->translate('hours', '', 'hours')
+                        $diff->h === 1 ? $this->translate('hour', '', 'hour')
+                                       : $this->translate('hours', '', 'hours')
                     );
                 }
 
                 if ($diff->i >= 1) {
                     return $diff->i .' '. (
-                        $diff->i == 1 ? $this->translate('minute', '', 'minute')
-                                      : $this->translate('minutes', '', 'minutes')
+                        $diff->i === 1 ? $this->translate('minute', '', 'minute')
+                                       : $this->translate('minutes', '', 'minutes')
                     );
                 }
 
@@ -427,7 +427,7 @@ class Formatter
     private function getPeriod(\DateTimeInterface $dt, string $case): string
     {
         $subkey = date_format($dt, 'a');
-        if ($case == 'upper') {
+        if ($case === 'upper') {
             return mb_strtoupper($this->translate('periods', $subkey, $subkey));
         }
         return mb_strtolower($this->translate('periods', $subkey, $subkey));
@@ -456,8 +456,8 @@ class Formatter
             ));
 
             // Somehow, zone id not added in exec.
-            if ($ret && $format == '+%c' && !preg_match('~(GMT| [-+:][\d]+)$~', $ret)) {
-                $ret .= ' '. (date_offset_get($dt) == 0 ? 'GMT' : date_format($dt, 'T'));
+            if ($ret && $format === '+%c' && !preg_match('~(GMT| [-+:][\d]+)$~', $ret)) {
+                $ret .= ' '. (date_offset_get($dt) === 0 ? 'GMT' : date_format($dt, 'T'));
             }
 
             return $ret;
@@ -465,7 +465,7 @@ class Formatter
             // Fallback.
             return match ($format) {
                 '+%c' => date_format($dt, 'D d M Y H:i:s') .' '. (
-                    date_offset_get($dt) == 0 ? 'GMT' : date_format($dt, 'T')
+                    date_offset_get($dt) === 0 ? 'GMT' : date_format($dt, 'T')
                 ),
                 '+%x' => date_format($dt, 'm/d/Y'),
                 '+%X' => date_format($dt, 'h:i:s A'),

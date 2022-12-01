@@ -43,7 +43,7 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
         try {
             parent::__construct($id);
         } catch (\Throwable $e) {
-            if ($id == '') {
+            if ($id === '') {
                 throw DateTimeZoneException::forEmptyId($e);
             }
             throw DateTimeZoneException::forCaughtThrowable($e);
@@ -75,7 +75,7 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
     public function getAbbr(): string
     {
         // // Not implemented yet internally.
-        // if (strtoupper($this->getId()) == 'EUROPE/ISTANBUL') {
+        // if (strtoupper($this->getId()) === 'EUROPE/ISTANBUL') {
         //     return 'TRT';
         // }
         return (new \DateTime('', $this))->format('T');
@@ -100,7 +100,7 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
      */
     public function getLocation(): array
     {
-        if (($type = $this->getType()) != self::TYPE_ID) {
+        if (($type = $this->getType()) !== self::TYPE_ID) {
             $type = match ($type) {
                 self::TYPE_NONE   => 'none',
                 self::TYPE_OFFSET => 'offset',
@@ -113,16 +113,16 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
             );
         }
 
-        $location = parent::getLocation();
+        $ret = parent::getLocation();
 
         // Normalize.
-        foreach ($location as $key => $value) {
-            if (!$value || $value == '??' || $value == '?') {
-                $location[$key] = null;
+        foreach ($ret as $key => $value) {
+            if (!$value || $value === '??' || $value === '?') {
+                $ret[$key] = null;
             }
         }
 
-        return $location;
+        return $ret;
     }
 
     /**

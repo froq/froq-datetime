@@ -160,7 +160,7 @@ class Zone extends Zones implements Arrayable, \Stringable
     public static function normalizeId(string $id): string
     {
         $id = strtoupper($id);
-        if ($id == 'UTC' || $id == 'GMT' || str_contains($id, ':')) {
+        if ($id === 'UTC' || $id === 'GMT' || str_contains($id, ':')) {
             return $id;
         }
 

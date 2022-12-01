@@ -56,7 +56,7 @@ class ZoneUtil extends \StaticClass
             $country && $country = strtoupper($country);
 
             // Act like original.
-            if (!$country || strlen($country) != 2) {
+            if (!$country || strlen($country) !== 2) {
                 throw new ZoneException(
                     'Argument $country must be a two-letter ISO 3166-1 compatible country '.
                     'code when argument $group is DateTimeZone::PER_COUNTRY, %s given',

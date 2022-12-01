@@ -81,7 +81,7 @@ class Intl extends \XArrayObject
      */
     public function hasTranslation(string $locale): bool
     {
-        return $this[$locale] != null;
+        return !!$this[$locale];
     }
 
     /**
