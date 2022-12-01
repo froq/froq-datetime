@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\zone;
 
 /**
@@ -12,7 +10,7 @@ namespace froq\datetime\zone;
  * using `DateTimeZone::listIdentifiers()` method.
  *
  * @package froq\datetime\zone
- * @object  froq\datetime\zone\Zones
+ * @class   froq\datetime\zone\Zones
  * @author  Kerem Güneş
  * @since   6.0
  */

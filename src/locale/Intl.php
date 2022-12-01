@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\locale;
 
 /**
  * A simple internationalization (translation) map / entry class.
  *
  * @package froq\datetime\locale
- * @object  froq\datetime\locale\Intl
+ * @class   froq\datetime\locale\Intl
  * @author  Kerem Güneş
  * @since   6.0
  */

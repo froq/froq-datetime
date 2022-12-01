@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 /**
  * Epoch (Unix time) class.
  *
  * @package froq\datetime
- * @object  froq\datetime\Epoch
+ * @class   froq\datetime\Epoch
  * @author  Kerem Güneş
  * @since   4.0, 5.0, 6.0
  */

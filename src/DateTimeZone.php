@@ -1,20 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 use froq\datetime\zone\{Zone, ZoneId, ZoneUtil};
 use froq\common\interface\Stringable;
 
 /**
- * An extended DateTimeZone class.
+ * An extended `DateTimeZone` class.
  *
  * @package froq\datetime
- * @object  froq\datetime\DateTimeZone
+ * @class   froq\datetime\DateTimeZone
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */

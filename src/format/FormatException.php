@@ -1,15 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\format;
 
 /**
  * @package froq\datetime\format
- * @object  froq\datetime\format\FormatException
+ * @class   froq\datetime\format\FormatException
  * @author  Kerem Güneş
  * @since   6.0
  */

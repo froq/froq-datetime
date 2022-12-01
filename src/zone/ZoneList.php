@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\zone;
 
 /**
  * A list class for listing time zones.
  *
  * @package froq\datetime\zone
- * @object  froq\datetime\zone\ZoneList
+ * @class   froq\datetime\zone\ZoneList
  * @author  Kerem Güneş
  * @since   6.0
  */

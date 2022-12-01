@@ -1,25 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 /**
  * @package froq\datetime
- * @object  froq\datetime\DateTimeException
+ * @class   froq\datetime\DateTimeException
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */
 class DateTimeException extends \froq\common\Exception
 {
-    /**
-     * Error details.
-     *
-     * @var array|null
-     */
+    /** Errors. */
     private ?array $errors = null;
 
     /**

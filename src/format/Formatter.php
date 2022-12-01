@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\format;
 
 use froq\datetime\{DateTime, DateTimeZone};
@@ -14,7 +12,7 @@ use froq\datetime\locale\{Locale, Intl};
  * A date/time formatter class with basic functionalities and locale support.
  *
  * @package froq\datetime\format
- * @object  froq\datetime\format\Formatter
+ * @class   froq\datetime\format\Formatter
  * @author  Kerem Güneş
  * @since   6.0
  */
