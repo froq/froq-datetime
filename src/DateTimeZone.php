@@ -54,7 +54,7 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
      * @magic
      * @missing
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }

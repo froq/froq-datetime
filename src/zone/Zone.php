@@ -63,7 +63,7 @@ class Zone extends Zones implements Arrayable, \Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->id;
     }

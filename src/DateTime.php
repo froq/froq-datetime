@@ -75,7 +75,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * @magic
      * @missing
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }
