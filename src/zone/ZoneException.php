@@ -13,12 +13,6 @@ namespace froq\datetime\zone;
  */
 class ZoneException extends \froq\datetime\DateTimeException
 {
-    /**
-     * Create for invalid id.
-     *
-     * @param  string $id
-     * @return static
-     */
     public static function forInvalidId(string $id): static
     {
         if ($id === '') {
@@ -31,11 +25,6 @@ class ZoneException extends \froq\datetime\DateTimeException
         }
     }
 
-    /**
-     * Create for last error.
-     *
-     * @return static
-     */
     public static function forLastError(): static
     {
         return new static(new \LastError());

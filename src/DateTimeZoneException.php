@@ -13,11 +13,6 @@ namespace froq\datetime;
  */
 class DateTimeZoneException extends DateTimeException
 {
-    /**
-     * Create for empty id.
-     *
-     * @return static
-     */
     public static function forEmptyId(): static
     {
         return new static('Empty time zone id');

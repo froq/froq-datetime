@@ -13,18 +13,12 @@ namespace froq\datetime;
  */
 class EpochException extends DateTimeException
 {
-    /**
-     * Create for invalid date/time.
-     *
-     * @param  mixed $when
-     * @return static
-     */
     public static function forInvalidDateTime(mixed $when): static
     {
         return match (true) {
             ($when === null) => new static('Invalid date/time: null'),
-            ($when === '') => new static('Invalid date/time: \'\''),
-            default => new static('Invalid date/time: %q', $when),
+            ($when === '')   => new static('Invalid date/time: \'\''),
+            default          => new static('Invalid date/time: %q', $when),
         };
     }
 }

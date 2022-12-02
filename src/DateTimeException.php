@@ -41,12 +41,6 @@ class DateTimeException extends \froq\common\Exception
         return $this->errors;
     }
 
-    /**
-     * Create for failed modification.
-     *
-     * @param  array|null $errors
-     * @return static
-     */
     public static function forFailedModification(array|null $errors): static
     {
         return new static(
@@ -55,12 +49,6 @@ class DateTimeException extends \froq\common\Exception
         );
     }
 
-    /**
-     * Create for invalid date.
-     *
-     * @param  string $date
-     * @return static
-     */
     public static function forInvalidDate(string $date): static
     {
         return new static(
@@ -69,12 +57,6 @@ class DateTimeException extends \froq\common\Exception
         );
     }
 
-    /**
-     * Create for invalid time.
-     *
-     * @param  string $time
-     * @return static
-     */
     public static function forInvalidTime(string $time): static
     {
         return new static(
@@ -83,12 +65,6 @@ class DateTimeException extends \froq\common\Exception
         );
     }
 
-    /**
-     * Create for caught throwable.
-     *
-     * @param  Throwable $e
-     * @return static
-     */
     public static function forCaughtThrowable(\Throwable $e): static
     {
         return new static($e, extract: true);

@@ -13,22 +13,11 @@ namespace froq\datetime\format;
  */
 class FormatException extends \froq\datetime\DateTimeException
 {
-    /**
-     * Create for empty format.
-     *
-     * @return static
-     */
     public static function forEmptyFormat(): static
     {
         return new static('No format yet, call setFormat() or pass $format argument');
     }
 
-    /**
-     * Create for invalid format.
-     *
-     * @param  string $format
-     * @return static
-     */
     public static function forInvalidFormat(string $format): static
     {
         return new static('Invalid format: %q', $format);
