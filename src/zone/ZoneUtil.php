@@ -40,10 +40,7 @@ class ZoneUtil extends \StaticClass
             $constant = 'DateTimeZone::' . $group;
 
             if (!defined($constant)) {
-                throw new ZoneException(
-                    'Invalid group %q, use a valid DateTimeZone constant name',
-                    $given
-                );
+                throw ZoneException::forInvalidGroup($given);
             }
 
             $group = constant($constant);
@@ -57,11 +54,7 @@ class ZoneUtil extends \StaticClass
 
             // Act like original.
             if (!$country || strlen($country) !== 2) {
-                throw new ZoneException(
-                    'Argument $country must be a two-letter ISO 3166-1 compatible country '.
-                    'code when argument $group is DateTimeZone::PER_COUNTRY, %s given',
-                    $given
-                );
+                throw ZoneException::forInvalidCountry($given ?: 'none');
             }
         }
 

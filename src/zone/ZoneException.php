@@ -25,6 +25,23 @@ class ZoneException extends \froq\datetime\DateTimeException
         }
     }
 
+    public static function forInvalidGroup(string $group): static
+    {
+        return new static(
+            'Invalid group %q, use a valid DateTimeZone constant name',
+            $group
+        );
+    }
+
+    public static function forInvalidCountry(string $country): static
+    {
+        return new static(
+            'Argument $country must be a two-letter ISO 3166-1 compatible country '.
+            'code when argument $group is DateTimeZone::PER_COUNTRY, %s given',
+            $country
+        );
+    }
+
     public static function forLastError(): static
     {
         return new static(new \LastError());
