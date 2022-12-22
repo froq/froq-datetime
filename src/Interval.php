@@ -164,15 +164,6 @@ class Interval extends \DateInterval implements Arrayable
     }
 
     /**
-     * @alias  createFromDateString()
-     * @return froq\datetime\Interval
-     */
-    public static function ofDate(string $datetime): Interval
-    {
-        return new Interval(Interval::createFromDateString($datetime));
-    }
-
-    /**
      * @inheritDoc froq\common\interface\Arrayable
      */
     public function toArray(): array
