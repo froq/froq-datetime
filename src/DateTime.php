@@ -100,7 +100,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
                 );
             }
 
-            $res =@ parent::modify($modifier);
+            @ $res = parent::modify($modifier);
             if ($res === false) {
                 $errors = parent::getLastErrors()['errors'] ?? null;
                 throw DateTimeException::forFailedModification($errors);
