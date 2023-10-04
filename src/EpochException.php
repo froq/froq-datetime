@@ -15,10 +15,8 @@ class EpochException extends DateTimeException
 {
     public static function forInvalidDateTime(mixed $when): static
     {
-        return match (true) {
-            ($when === null) => new static('Invalid date/time: null'),
-            ($when === '')   => new static('Invalid date/time: %q', ''),
-            default          => new static('Invalid date/time: %q', $when),
-        };
+        return ($when === null)
+             ? new static('Invalid date/time: null')
+             : new static('Invalid date/time: %q', $when);
     }
 }
