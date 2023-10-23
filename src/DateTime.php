@@ -501,13 +501,13 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * @param  int|null                 $minute
      * @param  int|null                 $second
      * @param  int|null                 $microsecond
-     * @param  string|DateTimeZone|null $where
+     * @param  string|DateTimeZone|null $timezone
      * @return froq\datetime\DateTime
      */
     public static function of(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-        int $microsecond = null, string|\DateTimeZone $where = null
+        int $microsecond = null, string|\DateTimeZone $timezone = null
     ): DateTime
     {
         $that = new DateTime();
@@ -515,8 +515,8 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
         $that->setDate((int) $year, (int) $month, (int) $day);
         $that->setTime((int) $hour, (int) $minute, (int) $second, (int) $microsecond);
 
-        if ($where !== null) {
-            $that->setTimezone($where);
+        if ($timezone !== null) {
+            $that->setTimezone($timezone);
         }
 
         return $that;
