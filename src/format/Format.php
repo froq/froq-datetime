@@ -13,7 +13,7 @@ namespace froq\datetime\format;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Format
+class Format implements \Stringable
 {
     /** Patterns. */
     public const
