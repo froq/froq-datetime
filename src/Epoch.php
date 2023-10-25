@@ -92,12 +92,13 @@ class Epoch
      * @param  int|null $month
      * @param  int|null $day
      * @param  int|null $year
-     * @return int|null
+     * @return froq\datetime\Epoch
+     * @throws froq\datetime\EpochException
      */
     public static function of(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-    ): int|null
+    ): Epoch
     {
         // Defaults.
         $defs = array_map('intval', explode('-', date('Y-m-d-H-i-s')));
@@ -107,7 +108,11 @@ class Epoch
             $month ?? $defs[1], $day    ?? $defs[2], $year   ?? $defs[0]
         );
 
-        return ($time !== false) ? $time : null;
+        if ($time === false) {
+            throw EpochException::forFailedMakeTime();
+        }
+
+        return new Epoch($time);
     }
 
     /**
@@ -119,12 +124,13 @@ class Epoch
      * @param  int|null $month
      * @param  int|null $day
      * @param  int|null $year
-     * @return int|null
+     * @return froq\datetime\Epoch
+     * @throws froq\datetime\EpochException
      */
     public static function ofUtc(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-    ): int|null
+    ): Epoch
     {
         // Defaults.
         $defs = array_map('intval', explode('-', gmdate('Y-m-d-H-i-s')));
@@ -134,7 +140,11 @@ class Epoch
             $month ?? $defs[1], $day    ?? $defs[2], $year   ?? $defs[0]
         );
 
-        return ($time !== false) ? $time : null;
+        if ($time === false) {
+            throw EpochException::forFailedMakeTime();
+        }
+
+        return new Epoch($time);
     }
 
     /**

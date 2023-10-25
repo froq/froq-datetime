@@ -19,4 +19,9 @@ class EpochException extends DateTimeException
              ? new static('Invalid date/time: null')
              : new static('Invalid date/time: %q', $when);
     }
+
+    public static function forFailedMakeTime(): static
+    {
+        return new static('Failed to make time');
+    }
 }
