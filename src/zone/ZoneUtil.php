@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\zone;
 
 /**
  * Zone utility class.
  *
  * @package froq\datetime\zone
- * @object  froq\datetime\zone\ZoneUtil
+ * @class   froq\datetime\zone\ZoneUtil
  * @author  Kerem Güneş
  * @since   6.0
  * @static
@@ -42,10 +40,7 @@ class ZoneUtil extends \StaticClass
             $constant = 'DateTimeZone::' . $group;
 
             if (!defined($constant)) {
-                throw new ZoneException(
-                    'Invalid group %q, use a valid DateTimeZone constant name',
-                    $given
-                );
+                throw ZoneException::forInvalidGroup($given);
             }
 
             $group = constant($constant);
@@ -58,12 +53,8 @@ class ZoneUtil extends \StaticClass
             $country && $country = strtoupper($country);
 
             // Act like original.
-            if (!$country || strlen($country) != 2) {
-                throw new ZoneException(
-                    'Argument $country must be a two-letter ISO 3166-1 compatible country '.
-                    'code when argument $group is DateTimeZone::PER_COUNTRY, %s given',
-                    $given
-                );
+            if (!$country || strlen($country) !== 2) {
+                throw ZoneException::forInvalidCountry($given ?: 'none');
             }
         }
 

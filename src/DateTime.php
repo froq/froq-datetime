@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 use froq\datetime\format\{Format, Formatter};
@@ -12,10 +10,10 @@ use froq\datetime\locale\{Locale, Intl};
 use froq\common\interface\Stringable;
 
 /**
- * An extended DateTime class.
+ * An extended `DateTime` class.
  *
  * @package froq\datetime
- * @object  froq\datetime\DateTime
+ * @class   froq\datetime\DateTime
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */
@@ -77,7 +75,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * @magic
      * @missing
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }
@@ -102,12 +100,10 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
                 );
             }
 
-            $res =@ parent::modify($modifier);
+            @ $res = parent::modify($modifier);
             if ($res === false) {
-                throw new DateTimeException(
-                    error_message(extract: true) ?: 'Modification failed',
-                    errors: parent::getLastErrors()['errors'] ?? null
-                );
+                $errors = parent::getLastErrors()['errors'] ?? null;
+                throw DateTimeException::forFailedModification($errors);
             }
         }
 
@@ -217,17 +213,15 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * @param  int|null   $month
      * @param  int|null   $day
      * @return self
+     * @throws froq\datetime\DateTimeException
      * @override
      */
     public function setDate(int|string $year, int $month = null, int $day = null): self
     {
         // Eg: 2022-01-01.
-        if (func_num_args() == 1 && is_string($year)) {
+        if (func_num_args() === 1 && is_string($year)) {
             if (!preg_match('~^(\d{4})-(\d{1,2})-(\d{1,2})$~', $year, $match)) {
-                throw new DateTimeException(
-                    'Invalid date: %q (use a parsable format, eg: 2022-01-01)',
-                    $year
-                );
+                throw DateTimeException::forInvalidDate($year);
             }
 
             [$year, $month, $day] = array_map('intval', array_slice($match, 1));
@@ -264,16 +258,14 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * @param  int|null   $second
      * @param  int|null   $microsecond
      * @return self
+     * @throws froq\datetime\DateTimeException
      * @override
      */
     public function setTime(int|string $hour, int $minute = null, int $second = null, int $microsecond = null): self
     {
-        if (func_num_args() == 1 && is_string($hour)) {
+        if (func_num_args() === 1 && is_string($hour)) {
             if (!preg_match('~^(\d{1,2}):(\d{1,2}):(\d{1,2})(?:\.(\d{3,6}))?$~', $hour, $match)) {
-                throw new DateTimeException(
-                    'Invalid time: %q (use a parsable format, eg: 22:11:19, 22:11:19.123345)',
-                    $hour
-                );
+                throw DateTimeException::forInvalidTime($hour);
             }
 
             [$hour, $minute, $second, $microsecond] = array_map('intval', array_pad(array_slice($match, 1), 4, null));
@@ -509,13 +501,13 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * @param  int|null                 $minute
      * @param  int|null                 $second
      * @param  int|null                 $microsecond
-     * @param  string|DateTimeZone|null $where
+     * @param  string|DateTimeZone|null $timezone
      * @return froq\datetime\DateTime
      */
     public static function of(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-        int $microsecond = null, string|\DateTimeZone $where = null
+        int $microsecond = null, string|\DateTimeZone $timezone = null
     ): DateTime
     {
         $that = new DateTime();
@@ -523,8 +515,8 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
         $that->setDate((int) $year, (int) $month, (int) $day);
         $that->setTime((int) $hour, (int) $minute, (int) $second, (int) $microsecond);
 
-        if ($where !== null) {
-            $that->setTimezone($where);
+        if ($timezone !== null) {
+            $that->setTimezone($timezone);
         }
 
         return $that;

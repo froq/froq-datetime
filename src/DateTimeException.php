@@ -1,21 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 /**
  * @package froq\datetime
- * @object  froq\datetime\DateTimeException
+ * @class   froq\datetime\DateTimeException
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */
 class DateTimeException extends \froq\common\Exception
 {
-    /** Error details. */
+    /** Errors. */
     private ?array $errors = null;
 
     /**
@@ -43,12 +41,30 @@ class DateTimeException extends \froq\common\Exception
         return $this->errors;
     }
 
-    /**
-     * Create for caught throwable.
-     *
-     * @param  Throwable $e
-     * @return static
-     */
+    public static function forFailedModification(array|null $errors): static
+    {
+        return new static(
+            error_message(extract: true) ?: 'Modification failed',
+            errors: $errors
+        );
+    }
+
+    public static function forInvalidDate(string $date): static
+    {
+        return new static(
+            'Invalid date: %q (use a parsable date, eg: 2022-01-01)',
+            $date
+        );
+    }
+
+    public static function forInvalidTime(string $time): static
+    {
+        return new static(
+            'Invalid time: %q (use a parsable time, eg: 22:11:19 or 22:11:19.123345)',
+            $time
+        );
+    }
+
     public static function forCaughtThrowable(\Throwable $e): static
     {
         return new static($e, extract: true);

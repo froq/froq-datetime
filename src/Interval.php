@@ -1,19 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 use froq\common\interface\Arrayable;
 
 /**
- * An extended DateInterval class.
+ * An extended `DateInterval` class.
  *
  * @package froq\datetime
- * @object  froq\datetime\Interval
+ * @class   froq\datetime\Interval
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -163,15 +161,6 @@ class Interval extends \DateInterval implements Arrayable
         }
 
         return $that;
-    }
-
-    /**
-     * @alias  createFromDateString()
-     * @return froq\datetime\Interval
-     */
-    public static function ofDate(string $datetime): Interval
-    {
-        return new Interval(Interval::createFromDateString($datetime));
     }
 
     /**

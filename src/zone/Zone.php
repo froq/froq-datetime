@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\zone;
 
 use froq\datetime\DateTimeZone;
@@ -14,7 +12,7 @@ use froq\common\interface\Arrayable;
  * Time zone class with some details & utility methods.
  *
  * @package froq\datetime\zone
- * @object  froq\datetime\zone\Zone
+ * @class   froq\datetime\zone\Zone
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */
@@ -65,7 +63,7 @@ class Zone extends Zones implements Arrayable, \Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->id;
     }
@@ -162,7 +160,7 @@ class Zone extends Zones implements Arrayable, \Stringable
     public static function normalizeId(string $id): string
     {
         $id = strtoupper($id);
-        if ($id == 'UTC' || $id == 'GMT' || str_contains($id, ':')) {
+        if ($id === 'UTC' || $id === 'GMT' || str_contains($id, ':')) {
             return $id;
         }
 

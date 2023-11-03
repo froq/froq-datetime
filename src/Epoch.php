@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime;
 
 /**
  * Epoch (Unix time) class.
  *
  * @package froq\datetime
- * @object  froq\datetime\Epoch
+ * @class   froq\datetime\Epoch
  * @author  Kerem Güneş
  * @since   4.0, 5.0, 6.0
  */
@@ -94,22 +92,27 @@ class Epoch
      * @param  int|null $month
      * @param  int|null $day
      * @param  int|null $year
-     * @return int|null
+     * @return froq\datetime\Epoch
+     * @throws froq\datetime\EpochException
      */
     public static function of(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-    ): int|null
+    ): Epoch
     {
         // Defaults.
         $defs = array_map('intval', explode('-', date('Y-m-d-H-i-s')));
 
-        $time =@ mktime(
-            $hour ?? $defs[3], $minute ?? $defs[4], $second ?? $defs[5],
-            $month ?? $defs[1], $day ?? $defs[2], $year ?? $defs[0]
+        $time = @mktime(
+            $hour  ?? $defs[3], $minute ?? $defs[4], $second ?? $defs[5],
+            $month ?? $defs[1], $day    ?? $defs[2], $year   ?? $defs[0]
         );
 
-        return ($time !== false) ? $time : null;
+        if ($time === false) {
+            throw EpochException::forFailedMakeTime();
+        }
+
+        return new Epoch($time);
     }
 
     /**
@@ -121,22 +124,27 @@ class Epoch
      * @param  int|null $month
      * @param  int|null $day
      * @param  int|null $year
-     * @return int|null
+     * @return froq\datetime\Epoch
+     * @throws froq\datetime\EpochException
      */
     public static function ofUtc(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-    ): int|null
+    ): Epoch
     {
         // Defaults.
         $defs = array_map('intval', explode('-', gmdate('Y-m-d-H-i-s')));
 
-        $time =@ gmmktime(
-            $hour ?? $defs[3], $minute ?? $defs[4], $second ?? $defs[5],
-            $month ?? $defs[1], $day ?? $defs[2], $year ?? $defs[0]
+        $time = @gmmktime(
+            $hour  ?? $defs[3], $minute ?? $defs[4], $second ?? $defs[5],
+            $month ?? $defs[1], $day    ?? $defs[2], $year   ?? $defs[0]
         );
 
-        return ($time !== false) ? $time : null;
+        if ($time === false) {
+            throw EpochException::forFailedMakeTime();
+        }
+
+        return new Epoch($time);
     }
 
     /**
@@ -155,7 +163,7 @@ class Epoch
             return (int) $when;
         }
 
-        $time =@ strtotime($when);
+        $time = @strtotime($when);
         return ($time !== false) ? $time : null;
     }
 

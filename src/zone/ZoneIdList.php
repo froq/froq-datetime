@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-datetime
  */
-declare(strict_types=1);
-
 namespace froq\datetime\zone;
 
 /**
  * A list class for listing time zone ids.
  *
  * @package froq\datetime\zone
- * @object  froq\datetime\zone\ZoneIdList
+ * @class   froq\datetime\zone\ZoneIdList
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -27,7 +25,7 @@ class ZoneIdList extends \ItemList
     public function __construct(string|int $group = null, string $country = null)
     {
         $items = ZoneUtil::listIds($group, $country);
-        $items->map(fn($id) => new ZoneId($id));
+        $items->map(fn(string $id): ZoneId => new ZoneId($id));
 
         parent::__construct($items);
     }
