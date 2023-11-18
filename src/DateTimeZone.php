@@ -43,10 +43,9 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
         try {
             parent::__construct($id);
         } catch (\Throwable $e) {
-            if ($id === '') {
-                throw DateTimeZoneException::forEmptyId($e);
-            }
-            throw DateTimeZoneException::forCaughtThrowable($e);
+            throw ($id === '') // Empty id.
+                ? DateTimeZoneException::forEmptyId($e)
+                : DateTimeZoneException::forCaughtThrowable($e);
         }
     }
 
