@@ -34,12 +34,16 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      */
     public function __construct(int|float|string|\DateTimeInterface $when = null, string|\DateTimeZone $where = null)
     {
+        // Now if none.
         $when ??= '';
 
-        if (is_object($when)) {
-            $where ??= $when->getTimezone();
+        // Use when's zone.
+        if (is_object($when) && !$where) {
+            $where = $when->getTimezone();
         }
-        if (is_string($where)) {
+
+        // Use where if non-empty.
+        if (is_string($where) && $where) {
             try {
                 $where = new DateTimeZone($where);
             } catch (\Throwable $e) {
