@@ -224,7 +224,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
                 throw DateTimeException::forInvalidDate($year);
             }
 
-            [$year, $month, $day] = array_map('intval', array_slice($match, 1));
+            [$year, $month, $day] = array_slice($match, 1);
         }
 
         return parent::setDate((int) $year, (int) $month, (int) $day);
@@ -268,7 +268,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
                 throw DateTimeException::forInvalidTime($hour);
             }
 
-            [$hour, $minute, $second, $microsecond] = array_map('intval', array_pad(array_slice($match, 1), 4, null));
+            [$hour, $minute, $second, $microsecond] = array_pad(array_slice($match, 1), 4, null);
         }
 
         return parent::setTime((int) $hour, (int) $minute, (int) $second, (int) $microsecond);
