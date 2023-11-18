@@ -17,4 +17,12 @@ class DateTimeZoneException extends DateTimeException
     {
         return new static('Empty time zone id');
     }
+
+    public static function forInvalidMethodCall(string ...$arguments): static
+    {
+        return new static(
+            'Method %s() is only available if timezone type is "id", '.
+            'this timezone type is %q (%s)', $arguments
+        );
+    }
 }

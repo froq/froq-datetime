@@ -107,9 +107,8 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
                 self::TYPE_ABBR   => 'abbreviation',
             };
 
-            throw new DateTimeZoneException(
-                'Method %s() is only available if timezone type is %q, this timezone type is %q (%s)',
-                [__METHOD__, 'id', $type, $this->getName()]
+            throw DateTimeZoneException::forInvalidMethodCall(
+                __METHOD__, $type, $this->getName()
             );
         }
 
