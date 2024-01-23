@@ -21,7 +21,7 @@ class ZoneUtil extends \StaticClass
      *
      * @param  string|int|null $group
      * @param  string|null     country
-     * @return Set
+     * @return Set<string>
      * @throws froq\datetime\zone\ZoneException
      */
     public static function listIds(string|int $group = null, string $country = null): \Set
