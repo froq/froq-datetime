@@ -20,7 +20,7 @@ class ZoneUtil extends \StaticClass
      * List ids.
      *
      * @param  string|int|null $group
-     * @param  string|null     country
+     * @param  string|null     $country
      * @return Set<string>
      * @throws froq\datetime\zone\ZoneException
      */
@@ -32,7 +32,7 @@ class ZoneUtil extends \StaticClass
             $given = $group;
             $group = strtoupper($group);
 
-            // As shortcut.
+            // As a shortcut.
             if ($group === 'COUNTRY') {
                 $group = 'PER_COUNTRY';
             }
@@ -60,7 +60,7 @@ class ZoneUtil extends \StaticClass
 
         $items = array_flip(\DateTimeZone::listIdentifiers($group, $country));
 
-        // Move UTC to top.
+        // Move UTC to top (if no country/group given).
         if (isset($items['UTC'])) {
             $items = ['UTC' => $items['UTC']] + $items;
         }
