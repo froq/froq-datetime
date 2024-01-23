@@ -123,11 +123,11 @@ class Formatter
      * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
-     * @throws froq\datetime\format\FormatException
+     * @throws froq\datetime\format\FormatterException
      */
     public function format(int|float|string|\DateTimeInterface $when, string|Format $format = null): string
     {
-        $format = (string) $format ?: $this->format ?: throw FormatException::forEmptyFormat();
+        $format = (string) $format ?: $this->format ?: throw FormatterException::forEmptyFormat();
 
         if (!$when instanceof \DateTimeInterface) {
             $when = new DateTime($when);
@@ -143,11 +143,11 @@ class Formatter
      * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
-     * @throws froq\datetime\format\FormatException
+     * @throws froq\datetime\format\FormatterException
      */
     public function formatUtc(int|float|string|\DateTimeInterface $when, string|Format $format = null): string
     {
-        $format = (string) $format ?: $this->format ?: throw FormatException::forEmptyFormat();
+        $format = (string) $format ?: $this->format ?: throw FormatterException::forEmptyFormat();
 
         if (!$when instanceof \DateTimeInterface) {
             $when = new DateTime($when);
@@ -169,12 +169,12 @@ class Formatter
      * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
-     * @throws froq\datetime\format\FormatException
+     * @throws froq\datetime\format\FormatterException
      * @thanks https://gist.github.com/bohwaz/42fc223031e2b2dd2585aab159a20f30
      */
     public function formatLocale(int|float|string|\DateTimeInterface $when, string|Format $format = null): string
     {
-        $format = (string) $format ?: $this->format ?: throw FormatException::forEmptyFormat();
+        $format = (string) $format ?: $this->format ?: throw FormatterException::forEmptyFormat();
 
         if (!$when instanceof \DateTimeInterface) {
             $when = new DateTime($when);
@@ -186,7 +186,7 @@ class Formatter
             if ($match[1] === '%n') return "\n";
             if ($match[1] === '%t') return "\t";
 
-            $replace = $this->map[$match[1]] ?? throw FormatException::forInvalidFormat($match[1]);
+            $replace = $this->map[$match[1]] ?? throw FormatterException::forInvalidFormat($match[1]);
 
             return is_string($replace) ? date_format($when, $replace) : $replace($when, $match[1]);
         }, $format);
@@ -202,7 +202,7 @@ class Formatter
      * @param  int|float|string|DateTimeInterface      $when
      * @param  string|froq\datetime\format\Format|null $format
      * @return string
-     * @causes froq\datetime\format\FormatException
+     * @causes froq\datetime\format\FormatterException
      */
     public function formatLocaleUtc(int|float|string|\DateTimeInterface $when, string|Format $format = null): string
     {

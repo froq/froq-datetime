@@ -7,11 +7,11 @@ namespace froq\datetime\format;
 
 /**
  * @package froq\datetime\format
- * @class   froq\datetime\format\FormatException
+ * @class   froq\datetime\format\FormatterException
  * @author  Kerem Güneş
  * @since   6.0
  */
-class FormatException extends \froq\datetime\DateTimeException
+class FormatterException extends \froq\datetime\DateTimeException
 {
     public static function forEmptyFormat(): static
     {
