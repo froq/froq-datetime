@@ -496,6 +496,27 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     }
 
     /**
+     * To timestamp.
+     *
+     * @return froq\datetime\Timestamp
+     */
+    public function toTimestamp(): Timestamp
+    {
+        return new Timestamp($this->getTimestamp());
+    }
+
+    /**
+     * From timestamp.
+     *
+     * @param  int|float|froq\datetime\Timestamp $timestamp
+     * @return froq\datetime\DateTime
+     */
+    public static function fromTimestamp(int|float|Timestamp $timestamp): DateTime
+    {
+        return new DateTime(is_number($timestamp) ? $timestamp : $timestamp->getTime());
+    }
+
+    /**
      * Parameterized static initializer.
      *
      * @param  int|null                 $year

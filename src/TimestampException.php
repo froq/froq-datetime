@@ -7,11 +7,11 @@ namespace froq\datetime;
 
 /**
  * @package froq\datetime
- * @class   froq\datetime\EpochException
+ * @class   froq\datetime\TimestampException
  * @author  Kerem Güneş
  * @since   6.0
  */
-class EpochException extends DateTimeException
+class TimestampException extends DateTimeException
 {
     public static function forInvalidDateTime(mixed $when): static
     {

@@ -6,33 +6,33 @@
 namespace froq\datetime;
 
 /**
- * Epoch (Unix time) class.
+ * Timestamp (Unix timestamp) class.
  *
  * @package froq\datetime
- * @class   froq\datetime\Epoch
+ * @class   froq\datetime\Timestamp
  * @author  Kerem Güneş
  * @since   4.0, 5.0, 6.0
  */
-class Epoch
+class Timestamp
 {
-    /** Timestamp. */
+    /** Time. */
     private int $time;
 
     /**
      * Constructor.
      *
      * @param  int|float|string|DateTimeInterface|null $when Default is time().
-     * @throws froq\datetime\EpochException
+     * @throws froq\datetime\TimestampException
      */
     public function __construct(int|float|string|\DateTimeInterface $when = null)
     {
         if (func_num_args()) {
             if ($when === null || $when === '') {
-                throw EpochException::forInvalidDateTime($when);
+                throw TimestampException::forInvalidDateTime($when);
             }
 
             $this->time = self::convert($when) ??
-                throw EpochException::forInvalidDateTime($when);
+                throw TimestampException::forInvalidDateTime($when);
         } else {
             $this->time = self::now();
         }
@@ -84,6 +84,27 @@ class Epoch
     }
 
     /**
+     * To date/time.
+     *
+     * @return froq\datetime\DateTime
+     */
+    public function toDateTime(): DateTime
+    {
+        return new DateTime($this->time, 'UTC');
+    }
+
+    /**
+     * From date/time.
+     *
+     * @param  string|DateTimeInterface $when
+     * @return froq\datetime\Timestamp
+     */
+    public static function fromDateTime(string|\DateTimeInterface $when): Timestamp
+    {
+        return new Timestamp($when);
+    }
+
+    /**
      * Parameterized static initializer.
      *
      * @param  int      $hour
@@ -92,13 +113,13 @@ class Epoch
      * @param  int|null $month
      * @param  int|null $day
      * @param  int|null $year
-     * @return froq\datetime\Epoch
-     * @throws froq\datetime\EpochException
+     * @return froq\datetime\Timestamp
+     * @throws froq\datetime\TimestampException
      */
     public static function of(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-    ): Epoch
+    ): Timestamp
     {
         // Defaults.
         $defs = array_map('intval', explode('-', date('Y-m-d-H-i-s')));
@@ -109,10 +130,10 @@ class Epoch
         );
 
         if ($time === false) {
-            throw EpochException::forFailedMakeTime();
+            throw TimestampException::forFailedMakeTime();
         }
 
-        return new Epoch($time);
+        return new Timestamp($time);
     }
 
     /**
@@ -124,13 +145,13 @@ class Epoch
      * @param  int|null $month
      * @param  int|null $day
      * @param  int|null $year
-     * @return froq\datetime\Epoch
-     * @throws froq\datetime\EpochException
+     * @return froq\datetime\Timestamp
+     * @throws froq\datetime\TimestampException
      */
     public static function ofUtc(
         int $year = null, int $month = null, int $day = null,
         int $hour = null, int $minute = null, int $second = null,
-    ): Epoch
+    ): Timestamp
     {
         // Defaults.
         $defs = array_map('intval', explode('-', gmdate('Y-m-d-H-i-s')));
@@ -141,14 +162,14 @@ class Epoch
         );
 
         if ($time === false) {
-            throw EpochException::forFailedMakeTime();
+            throw TimestampException::forFailedMakeTime();
         }
 
-        return new Epoch($time);
+        return new Timestamp($time);
     }
 
     /**
-     * Convert given input to epoch (Unix time).
+     * Convert given input to timestamp.
      *
      * @param  int|float|string|DateTimeInterface $when
      * @return int|null

@@ -59,28 +59,6 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
     }
 
     /**
-     * @alias getName()
-     */
-    public function getId(): string
-    {
-        return $this->getName();
-    }
-
-    /**
-     * Get abbr name.
-     *
-     * @return string
-     */
-    public function getAbbr(): string
-    {
-        // // Not implemented yet internally.
-        // if (strtoupper($this->getId()) === 'EUROPE/ISTANBUL') {
-        //     return 'TRT';
-        // }
-        return (new \DateTime('', $this))->format('T');
-    }
-
-    /**
      * Get type.
      *
      * @return int
@@ -91,36 +69,56 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
     }
 
     /**
-     * Get location.
+     * Get ID (valid for timezone_type=3).
+     *
+     * @return string
+     */
+    public function getId(): string
+    {
+        if ($this->getType() === self::TYPE_ID) {
+            return parent::getName();
+        }
+
+        return '';
+    }
+
+    /**
+     * Get abbr.
+     *
+     * @return string
+     */
+    public function getAbbr(): string
+    {
+        // @cancel: Not implemented yet internally.
+        // if (strtoupper($this->getId()) === 'EUROPE/ISTANBUL') {
+        //     return 'TRT';
+        // }
+
+        return (new \DateTime('', $this))->format('T');
+    }
+
+    /**
+     * Get location (valid for timezone_type=3).
      *
      * @return array
-     * @throws froq\datetime\DateTimeZoneException
      * @override
      */
     public function getLocation(): array
     {
-        if (($type = $this->getType()) !== self::TYPE_ID) {
-            $type = match ($type) {
-                self::TYPE_NONE   => 'none',
-                self::TYPE_OFFSET => 'offset',
-                self::TYPE_ABBR   => 'abbreviation',
-            };
+        if ($this->getType() === self::TYPE_ID) {
+            $ret = parent::getLocation();
 
-            throw DateTimeZoneException::forInvalidMethodCall(
-                __METHOD__, $type, $this->getName()
-            );
-        }
-
-        $ret = parent::getLocation();
-
-        // Normalize.
-        foreach ($ret as $key => $value) {
-            if (!$value || $value === '??' || $value === '?') {
-                $ret[$key] = null;
+            // Normalize.
+            foreach ($ret as $key => $value) {
+                if (!$value || $value === '??' || $value === '?') {
+                    $ret[$key] = null;
+                }
             }
+
+            return $ret;
         }
 
-        return $ret;
+        return [];
     }
 
     /**
