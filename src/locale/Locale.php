@@ -5,6 +5,12 @@
  */
 namespace froq\datetime\locale;
 
+use froq\util\locale\{
+    Locale as BaseLocale,
+    LocaleException as BaseLocaleException,
+    LocaleCategory
+};
+
 /**
  * A class to use as time locale.
  *
@@ -13,7 +19,7 @@ namespace froq\datetime\locale;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Locale extends \Locale
+class Locale extends BaseLocale
 {
     /** Default time locale. */
     public const DEFAULT = 'en_US.UTF-8';
@@ -42,9 +48,9 @@ class Locale extends \Locale
         try {
             parent::__construct(
                 $language, $country, $encoding,
-                category: new \LocaleCategory('time')
+                category: new LocaleCategory('time')
             );
-        } catch (\LocaleError $e) {
+        } catch (BaseLocaleException $e) {
             throw new LocaleException($e);
         }
     }
@@ -58,7 +64,7 @@ class Locale extends \Locale
         try {
             $info = parent::parse($locale);
             return new static($info['language'], $info['country'], $info['encoding']);
-        } catch (\LocaleError $e) {
+        } catch (BaseLocaleException $e) {
             throw new LocaleException($e);
         }
     }
@@ -72,7 +78,7 @@ class Locale extends \Locale
         try {
             $info = parent::parseTag($tag);
             return new static($info['language'], $info['country'], $encoding);
-        } catch (\LocaleError $e) {
+        } catch (BaseLocaleException $e) {
             throw new LocaleException($e);
         }
     }
