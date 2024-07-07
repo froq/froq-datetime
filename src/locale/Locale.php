@@ -88,9 +88,9 @@ class Locale extends BaseLocale
      *
      * @param  string    $locale
      * @param  string ...$locales
-     * @return string
+     * @return string|false
      */
-    public static function setDefault(string $locale, string ...$locales): string
+    public static function setDefault(string $locale, string ...$locales): string|false
     {
         return parent::set(LC_TIME, $locale, ...$locales);
     }
