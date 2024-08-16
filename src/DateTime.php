@@ -45,7 +45,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
         // Use where if non-empty.
         if (is_string($where) && $where) {
             try {
-                $where = new DateTimeZone($where);
+                $where = $this->createTimezone($where);
             } catch (\Throwable $e) {
                 throw DateTimeException::forCaughtThrowable($e);
             }
@@ -126,7 +126,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     {
         if (is_string($timezone)) {
             try {
-                $timezone = new DateTimeZone($timezone);
+                $timezone = $this->createTimezone($timezone);
             } catch (\Throwable $e) {
                 throw DateTimeException::forCaughtThrowable($e);
             }
@@ -138,14 +138,14 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     /**
      * Get timezone.
      *
-     * @return froq\datetime\DateTimeZone
+     * @return froq\datetime\{DateTimeZone|UtcDateTimeZone}
      * @override
      */
-    public function getTimezone(): DateTimeZone
+    public function getTimezone(): DateTimeZone|UtcDateTimeZone
     {
         // @tome: Parent's getTimezone() always return DateTimeZone, not a subclass of
         // DateTimeZone (eg: froq\datetime\DateTimeZone or froq\datetime\UtcDateTimeZone).
-        return new DateTimeZone(parent::getTimezone()->getName());
+        return $this->createTimezone(parent::getTimezone()->getName());
     }
 
     /**
@@ -545,5 +545,13 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
         }
 
         return $that;
+    }
+
+    /**
+     * @internal
+     */
+    private function createTimezone(string $timezone): UtcDateTimeZone|DateTimeZone
+    {
+        return ($this instanceof UtcDateTime) ? new UtcDateTimeZone($timezone) : new DateTimeZone($timezone);
     }
 }

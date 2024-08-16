@@ -23,7 +23,7 @@ class UtcDateTime extends DateTime
      */
     public function __construct(int|float|string|\DateTimeInterface $when = null)
     {
-        parent::__construct($when, 'UTC');
+        parent::__construct($when, new UtcDateTimeZone());
     }
 }
 
