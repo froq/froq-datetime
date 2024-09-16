@@ -109,6 +109,16 @@ class Zone extends Zones implements Arrayable, \Stringable
     }
 
     /**
+     * Get "now" date/time for this zone.
+     *
+     * @return froq\datetime\DateTime
+     */
+    public function now(): DateTime
+    {
+        return new DateTime('', $this->id);
+    }
+
+    /**
      * Get as DateTimeZone instance.
      *
      * @return froq\datetime\DateTimeZone
@@ -125,16 +135,6 @@ class Zone extends Zones implements Arrayable, \Stringable
     {
         return ['id' => $this->id, 'name' => $this->name,
                 'offset' => $this->offset, 'offsetCode' => $this->offsetCode];
-    }
-
-    /**
-     * Get "now" date/time for this zone.
-     *
-     * @return froq\datetime\DateTime
-     */
-    public function now(): DateTime
-    {
-        return new DateTime('', $this->id);
     }
 
     /**
