@@ -366,6 +366,17 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     }
 
     /**
+     * Format UTC.
+     *
+     * @param  string|froq\datetime\format\Format $format
+     * @return string
+     */
+    public function formatUtc(string|Format $format): string
+    {
+        return $this->toUtcString((string) $format);
+    }
+
+    /**
      * Format locale.
      *
      * @param  string|froq\datetime\format\Format      $format
