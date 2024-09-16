@@ -86,11 +86,12 @@ class Timestamp
     /**
      * To date/time.
      *
+     * @param  string|DateTimeZone $where
      * @return froq\datetime\DateTime
      */
-    public function toDateTime(): DateTime
+    public function toDateTime(string|\DateTimeZone $where = 'UTC'): DateTime
     {
-        return new DateTime($this->time, 'UTC');
+        return new DateTime($this->time, $where);
     }
 
     /**

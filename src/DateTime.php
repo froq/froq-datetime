@@ -204,6 +204,7 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
      * Get offset code.
      *
      * @return string
+     * @missing
      */
     public function getOffsetCode(): string
     {
