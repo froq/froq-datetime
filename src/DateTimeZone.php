@@ -90,11 +90,40 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
     public function getAbbr(): string
     {
         // @cancel: Not implemented yet internally.
+        // @see https://en.wikipedia.org/wiki/Time_in_Turkey
         // if (strtoupper($this->getId()) === 'EUROPE/ISTANBUL') {
         //     return 'TRT';
         // }
 
         return (new \DateTime('', $this))->format('T');
+    }
+
+    /**
+     * Get name.
+     *
+     * @return string
+     * @override
+     */
+    public function getName(): string
+    {
+        if ($this->getOffset() === 0) {
+            return 'UTC';
+        }
+
+        return parent::getName();
+    }
+
+    /**
+     * Get a suitable name for presentation.
+     *
+     * @return string
+     * @missing
+     */
+    public function getDisplayName(): string
+    {
+        return ZoneUtil::idToName(
+            $this->getId() ?: $this->getName()
+        );
     }
 
     /**
@@ -119,17 +148,6 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
         }
 
         return [];
-    }
-
-    /**
-     * Get a suitable name for presentation.
-     *
-     * @return string
-     * @missing
-     */
-    public function getDisplayName(): string
-    {
-        return ZoneUtil::idToName($this->getId());
     }
 
     /**
@@ -189,9 +207,10 @@ class DateTimeZone extends \DateTimeZone implements Stringable, \Stringable, \Js
     }
 
     /**
+     * @permissive Return type mixed.
      * @inheritDoc JsonSerializable
      */
-    public function jsonSerialize(): string
+    public function jsonSerialize(): mixed
     {
         return (string) $this;
     }

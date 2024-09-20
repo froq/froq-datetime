@@ -13,10 +13,10 @@ namespace froq\datetime;
  * @author  Kerem Güneş
  * @since   4.0, 5.0, 6.0
  */
-class Timestamp
+class Timestamp implements \Stringable, \JsonSerializable
 {
     /** Time. */
-    private int $time;
+    protected int $time;
 
     /**
      * Constructor.
@@ -36,6 +36,14 @@ class Timestamp
         } else {
             $this->time = self::now();
         }
+    }
+
+    /**
+     * @magic
+     */
+    public function __toString(): string
+    {
+        return $this->format('c');
     }
 
     /**
@@ -103,6 +111,15 @@ class Timestamp
     public static function fromDateTime(string|\DateTimeInterface $when): Timestamp
     {
         return new Timestamp($when);
+    }
+
+    /**
+     * @permissive Return type mixed.
+     * @inheritDoc JsonSerializable
+     */
+    public function jsonSerialize(): mixed
+    {
+        return (string) $this;
     }
 
     /**

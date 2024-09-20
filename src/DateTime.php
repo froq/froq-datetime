@@ -167,6 +167,15 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     {
         return $this->getTimezone()->getAbbr();
     }
+    /**
+     * Get timezone name.
+     *
+     * @return string
+     */
+    public function getTimezoneName(): string
+    {
+        return $this->getTimezone()->getName();
+    }
 
     /**
      * Set timestamp.
@@ -500,9 +509,10 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     }
 
     /**
+     * @permissive Return type mixed.
      * @inheritDoc JsonSerializable
      */
-    public function jsonSerialize(): string
+    public function jsonSerialize(): mixed
     {
         return (string) $this;
     }
