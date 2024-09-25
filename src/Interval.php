@@ -5,7 +5,7 @@
  */
 namespace froq\datetime;
 
-use froq\common\interface\Arrayable;
+use froq\common\interface\{Arrayable, Stringable};
 
 /**
  * An extended `DateInterval` class.
@@ -15,8 +15,14 @@ use froq\common\interface\Arrayable;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Interval extends \DateInterval implements Arrayable
+class Interval extends \DateInterval implements Arrayable, Stringable, \Stringable
 {
+    /**
+     * Very interesting that being unable to write
+     * `days` property while `f` is writable.
+     */
+    private int|false|null $_days = null;
+
     /**
      * Constructor.
      *
@@ -26,14 +32,35 @@ class Interval extends \DateInterval implements Arrayable
      */
     public function __construct(string|\DateInterval $duration = null)
     {
-        if ($duration instanceof \DateInterval) {
-            $this->copy($duration, $this);
-        } else {
-            // Prevent format error with 0 values.
-            $duration ??= 'P0Y';
+        // Store original attributes.
+        $fraction = $days = null;
 
-            parent::__construct($duration);
+        // Allow "1 Day" like formats.
+        if (is_string($duration) && $duration[0] !== 'P') {
+            $duration = self::createFormatFromInterval(
+                (new \DateTime())->diff(new \DateTime($duration))
+            );
+        } elseif ($duration instanceof \DateInterval) {
+            [$fraction, $days] = [$duration->f, $duration->days];
+            $duration = self::createFormatFromInterval($duration);
         }
+
+        // Prevent format error.
+        $duration ??= 'PT0S';
+
+        parent::__construct($duration);
+
+        isset($fraction) && $this->f = $fraction;
+        isset($days)     && $this->_days = $days;
+    }
+
+    /**
+     * @magic
+     * @missing
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 
     /**
@@ -123,14 +150,11 @@ class Interval extends \DateInterval implements Arrayable
      */
     public function getDays(): int|false
     {
-        return $this->days;
+        return $this->_days ?? $this->days;
     }
 
     /**
      * Parameterized static initializer.
-     *
-     * Note: Sometimes property "days" cannot be set manually, so
-     * unaffected by the parameter $days, dunno..
      *
      * @param  int|null       $year
      * @param  int|null       $month
@@ -148,19 +172,52 @@ class Interval extends \DateInterval implements Arrayable
         int|float $fraction = null, int $days = null
     ): Interval
     {
-        $that = new Interval(sprintf(
-            'P%dY%dM%dDT%dH%dM%dS',
-            $year, $month, $day,
-            $hour, $minute, $second
+        $that = Interval::createFromDateString(sprintf(
+            '%d year %d month %d day %d hour %d minute %d second %d microsecond',
+            $year, $month, $day, $hour, $minute, $second, $fraction * 1000000
         ));
 
         // Must set manually.
         $that->f = (float) $fraction;
-        if ($days !== null) {
-            $that->days = (int) $days;
-        }
+        $that->_days = $days;
 
         return $that;
+    }
+
+    /**
+     * @override
+     */
+    public static function createFromDateString(string $datetime): Interval
+    {
+        return new Interval(parent::createFromDateString($datetime));
+    }
+
+    /**
+     * Create a format form given interval.
+     *
+     * @param  DateInterval $interval
+     * @return string
+     */
+    public static function createFormatFromInterval(\DateInterval $interval): string
+    {
+        $format = 'P';
+
+        if ($interval->y + $interval->m + $interval->d) {
+            $interval->y && $format .= $interval->y . 'Y';
+            $interval->m && $format .= $interval->m . 'M';
+            $interval->d && $format .= $interval->d . 'D';
+        }
+
+        if ($interval->h + $interval->i + $interval->s) {
+            // Time separator.
+            $format .= 'T';
+
+            $interval->h && $format .= $interval->h . 'H';
+            $interval->i && $format .= $interval->i . 'M';
+            $interval->s && $format .= $interval->s . 'S';
+        }
+
+        return ($format !== 'P') ? $format : 'PT0S';
     }
 
     /**
@@ -171,17 +228,26 @@ class Interval extends \DateInterval implements Arrayable
         return [
             'year' => $this->y, 'month' => $this->m, 'day' => $this->d,
             'hour' => $this->h, 'minute' => $this->i, 'second' => $this->s,
-            'fraction' => $this->f, 'days' => $this->days
+            'fraction' => $this->f, 'days' => $this->getDays()
         ];
     }
 
     /**
-     * Copy source interval properties to target interval.
+     * @inheritDoc froq\common\interface\Stringable
      */
-    private function copy(\DateInterval $source, \DateInterval $target): void
+    public function toString(): string
     {
-        foreach (get_object_vars($source) as $name => $value) {
-            $target->$name = $value;
-        }
+        return self::createFormatFromInterval($this);
+    }
+
+    /**
+     * To date/time.
+     *
+     * @param  string|DateTimeZone|null $where
+     * @return froq\datetime\DateTime
+     */
+    public function toDateTime(string|\DateTimeZone $where = null): DateTime
+    {
+        return (new DateTime('', $where))->modify($this);
     }
 }

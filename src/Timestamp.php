@@ -94,10 +94,10 @@ class Timestamp implements \Stringable, \JsonSerializable
     /**
      * To date/time.
      *
-     * @param  string|DateTimeZone $where
+     * @param  string|DateTimeZone|null $where
      * @return froq\datetime\DateTime
      */
-    public function toDateTime(string|\DateTimeZone $where = 'UTC'): DateTime
+    public function toDateTime(string|\DateTimeZone $where = null): DateTime
     {
         return new DateTime($this->time, $where);
     }
