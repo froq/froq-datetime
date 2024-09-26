@@ -154,6 +154,20 @@ class Interval extends \DateInterval implements Arrayable, Stringable, \Stringab
     }
 
     /**
+     * Check if any diff calculated by date/time fields.
+     *
+     * @return bool
+     */
+    public function hasDiff(): bool
+    {
+        return !!(
+            $this->y + $this->m + $this->d +
+            $this->h + $this->i + $this->s +
+            $this->f
+        );
+    }
+
+    /**
      * Parameterized static initializer.
      *
      * @param  int|null       $year

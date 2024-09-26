@@ -6,6 +6,7 @@
 namespace froq\datetime;
 
 use froq\common\interface\{Arrayable, Lengthable};
+use Iterator, ArrayIterator;
 
 /**
  * An extended `DatePeriod` class.
@@ -17,6 +18,13 @@ use froq\common\interface\{Arrayable, Lengthable};
  */
 class Period extends \DatePeriod implements Arrayable, Lengthable
 {
+    /** Stored options. */
+    private array $options = [
+        'includeStartDate' => true,
+        'includeEndDate'   => true,
+        'convert'          => false,
+    ];
+
     /**
      * Constructor.
      *
@@ -49,6 +57,10 @@ class Period extends \DatePeriod implements Arrayable, Lengthable
             $start = self::convert($start);
             $end && $end = self::convert($end);
         }
+
+        $this->options = array_merge($this->options, compact(
+            'includeStartDate', 'includeEndDate', 'convert'
+        ));
 
         parent::__construct(
             $start, $interval, $end,
@@ -139,9 +151,9 @@ class Period extends \DatePeriod implements Arrayable, Lengthable
     /**
      * @inheritDoc froq\common\interface\Arrayable
      */
-    public function toArray(): array
+    public function toArray(bool $reverse = false): array
     {
-        return iterator_to_array($this);
+        return $this->getIterator($reverse)->getArrayCopy();
     }
 
     /**
@@ -149,7 +161,34 @@ class Period extends \DatePeriod implements Arrayable, Lengthable
      */
     public function length(): int
     {
-        return iterator_count($this);
+        return $this->getIterator()->count();
+    }
+
+    /**
+     * This method overrides since `DatePeriod` goes with infinite loops
+     * when start date is greater than end date or it does nothing eighter.
+     *
+     * @override
+     * @permissive
+     */
+    public function getIterator(bool $reverse = false): Iterator|ArrayIterator
+    {
+        $interval = new Interval($this->interval);
+
+        // Prevent "0 day" dead loops.
+        if ($this->start == $this->end || !$interval->hasDiff()) {
+            return new ArrayIterator();
+        }
+
+        // Reverse to prevent empty loops.
+        if ($this->start > $this->end) {
+            $that = new Period($this->end, $this->start, $this->interval, ...$this->options);
+            $iter = $that->getIterator(true);
+        } else {
+            $iter = parent::getIterator();
+        }
+
+        return new ArrayIterator($reverse ? reverse([...$iter]) : [...$iter]);
     }
 
     /**
