@@ -85,35 +85,6 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     }
 
     /**
-     * Modify.
-     *
-     * @param  int|string|DateInterval $modifier
-     * @return self
-     * @throws froq\datetime\DateTimeException
-     * @override
-     */
-    public function modify(int|string|\DateInterval $modifier): self
-    {
-        if (is_int($modifier)) {
-            $this->setTimestamp($this->getTimestamp() + $modifier);
-        } else {
-            if ($modifier instanceof \DateInterval) {
-                $modifier = $modifier->format(
-                    '%r%y year %r%m month %r%d day %r%h hour '.
-                    '%r%i minute %r%s second %r%f microsecond'
-                );
-            }
-
-            if (!@parent::modify($modifier)) {
-                $errors = parent::getLastErrors()['errors'] ?? null;
-                throw DateTimeException::forFailedModification($errors);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * Set timezone.
      *
      * @param  string|DateTimeZone $timezone
@@ -363,6 +334,35 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
     }
 
     /**
+     * Modify.
+     *
+     * @param  int|string|DateInterval $modifier
+     * @return self
+     * @throws froq\datetime\DateTimeException
+     * @override
+     */
+    public function modify(int|string|\DateInterval $modifier): self
+    {
+        if (is_int($modifier)) {
+            $this->setTimestamp($this->getTimestamp() + $modifier);
+        } else {
+            if ($modifier instanceof \DateInterval) {
+                $modifier = $modifier->format(
+                    '%r%y year %r%m month %r%d day %r%h hour '.
+                    '%r%i minute %r%s second %r%f microsecond'
+                );
+            }
+
+            if (!@parent::modify($modifier)) {
+                $errors = parent::getLastErrors()['errors'] ?? null;
+                throw DateTimeException::forFailedModification($errors);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Format.
      *
      * @param  string|froq\datetime\format\Format $format
@@ -413,6 +413,18 @@ class DateTime extends \DateTime implements Stringable, \Stringable, \JsonSerial
         $formatter = new Formatter(null, $locale, $intl);
 
         return $formatter->formatAgo($this, $this->getTimezone(), $format, $showTime);
+    }
+
+    /**
+     * Format by given timezone.
+     *
+     * @param  string|Format       $format
+     * @param  string|DateTimeZone $timezone
+     * @return string
+     */
+    public function formatBy(string|Format $format, string|\DateTimeZone $timezone): string
+    {
+        return (clone $this)->setTimezone($timezone)->format($format);
     }
 
     /**
